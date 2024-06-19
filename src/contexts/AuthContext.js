@@ -1,0 +1,509 @@
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import asyncStorageAvailable from '../utils/asyncStorageAvailable';
+import axiosInstance from '../utils/axios';
+import {isValidToken, jwtDecode, setSession} from '../utils/auth';
+import axios from 'axios';
+// import {HOST_API_KEY} from '@env';
+
+// ----------------------------------------------------------------------
+
+const initialState = {
+  isInitialized: false,
+  isAuthenticated: false,
+  isRegister: false,
+  isForgotPassword: false,
+  isVerifyEmail: false,
+  isCheckCode: false,
+  isChangePwd: false,
+  user: null,
+  users: [],
+  email: null,
+  access: null,
+  data: null,
+  msg: null,
+  settings: null,
+};
+
+const reducer = (state, action) => {
+  if (action.type === 'INITIAL') {
+    return {
+      isInitialized: true,
+      isAuthenticated: action.payload.isAuthenticated,
+      isRegister: action.payload.isRegister,
+      isForgotPassword: action.payload.isForgotPassword,
+      isVerifyEmail: action.payload.isVerifyEmail,
+      isCheckCode: action.payload.isCheckCode,
+      isChangePwd: action.payload.isChangePwd,
+      user: action.payload.user,
+      users: action.payload.users,
+      email: action.payload.email,
+      access: action.payload.access,
+      data: action.payload.data,
+    };
+  }
+  if (action.type === 'LOGIN') {
+    return {
+      ...state,
+      isAuthenticated: action.payload.isAuthenticated,
+      user: action.payload.user,
+      msg: action.payload.msg,
+      access: action.payload.access,
+      settings: action.payload.settings,
+    };
+  }
+  if (action.type === 'REGISTER') {
+    if (action.payload.data.code === 201) {
+      return {
+        ...state,
+        isRegister: action.payload.isRegister,
+        email: action.payload.email,
+        data: action.payload.data,
+      };
+    } else {
+      return {
+        ...state,
+        isRegister: action.payload.isRegister,
+        data: action.payload.data,
+      };
+    }
+  }
+  if (action.type === 'FORGOTPASS') {
+    return {
+      ...state,
+      isForgotPassword: action.payload.isForgotPassword,
+      email: action.payload.email,
+      msg: action.payload.msg,
+    };
+  }
+  if (action.type === 'SENDVERIFY') {
+    return {
+      ...state,
+      isVerifyEmail: true,
+    };
+  }
+  if (action.type === 'CHECKCODE') {
+    return {
+      ...state,
+      isCheckCode: true,
+    };
+  }
+  if (action.type === 'UPDATE') {
+    return {
+      ...state,
+      isChangePwd: true,
+    };
+  }
+  if (action.type === 'LOGOUT') {
+    return {
+      ...state,
+      isAuthenticated: false,
+      user: null,
+      users: [],
+      access: null,
+      email: null,
+    };
+  }
+
+  return state;
+};
+
+// ----------------------------------------------------------------------
+
+const AuthContext = createContext();
+
+const storageAvailable = asyncStorageAvailable();
+
+// ----------------------------------------------------------------------
+
+const AuthProvider = ({children}) => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  let expiredTimer;
+
+  // const storageAvailable = asyncStorageAvailable();
+
+  const initialize = useCallback(async () => {
+    try {
+      const accessToken = storageAvailable
+        ? await AsyncStorage.getItem('accessToken')
+        : '';
+
+      if (accessToken && isValidToken(accessToken)) {
+        setSession(accessToken);
+
+        const {id} = jwtDecode(accessToken);
+
+        // fetch the user state if the accessToken exists
+        const response = await axiosInstance.get(`/user/${id}`, {
+          headers: {
+            'authorization': accessToken
+          }
+        })
+        
+        console.log(`User: ${JSON.stringify(response.data.data)}`);
+
+        if (id) {
+          dispatch({
+            type: 'INITIAL',
+            payload: {
+              isAuthenticated: true,
+              isRegister: false,
+              isForgotPassword: false,
+              isChangePwd: false,
+              isVerifyEmail: false,
+              isCheckCode: false,
+              user: response.data.data,
+            },
+          });
+        } else {
+          dispatch({
+            type: 'INITIAL',
+            payload: {
+              isAuthenticated: false,
+              isRegister: false,
+              isForgotPassword: false,
+              isVerifyEmail: false,
+              isCheckCode: false,
+              isChangePwd: false,
+              user: null,
+            },
+          });
+        }
+      } else {
+        dispatch({
+          type: 'INITIAL',
+          payload: {
+            isAuthenticated: false,
+            isRegister: false,
+            isForgotPassword: false,
+            isCheckCode: false,
+            isVerifyEmail: false,
+            isChangePwd: false,
+            user: null,
+          },
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      dispatch({
+        type: 'INITIAL',
+        payload: {
+          isAuthenticated: false,
+          isForgotPassword: false,
+          isRegister: false,
+          isVerifyEmail: false,
+          isCheckCode: false,
+          isChangePwd: false,
+          user: null,
+        },
+      });
+    }
+  }, [storageAvailable]);
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  // LOGIN
+  const login = useCallback(async (email, password) => {
+    try {
+      const response = await axiosInstance.post('/auth/signin', {
+        email,
+        password,
+      });
+
+      if (response.data.code === 200) {
+        const {accessToken, user, settings} = response.data.data;
+        setSession(accessToken);
+
+        const {exp} = jwtDecode(accessToken);
+        await tokenExpired(exp);
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            isAuthenticated: true,
+            user: user,
+            access: accessToken,
+            settings: settings,
+          },
+        });
+      }
+
+      if (
+        response.data.code === 404 ||
+        response.data.code === 410 ||
+        response.data.code === 412
+      ) {
+        console.log(response.data.message);
+        dispatch({
+          type: 'LOGIN',
+          payload: {
+            isAuthenticated: false,
+            msg: response.data.message,
+          },
+        });
+      }
+    } catch (error) {
+      throw (error && error.response && error.response.data) || error;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // REGISTER
+  const register = useCallback(async (email, password) => {
+    try {
+      const registerResponse = await axios.post(
+        `${process.env.HOST_URL}/auth/signup/`,
+        {
+          email,
+          password,
+        },
+      );
+
+      // const registerResponse = await axios.post('http://172.174.247.52:5000/', {
+      //   email,
+      //   password
+      // })
+
+      console.log('register==========', registerResponse.data);
+      console.log(`email: `, email);
+      if (registerResponse.data.code === 201) {
+        dispatch({
+          type: 'REGISTER',
+          payload: {
+            isRegister: true,
+            email: email,
+            data: registerResponse.data,
+          },
+        });
+      } else if (registerResponse.data.code === 407) {
+        dispatch({
+          type: 'REGISTER',
+          payload: {
+            isRegister: true,
+            data: registerResponse.data,
+          },
+        });
+      }
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log('Error data:', error.response.data);
+        console.log('Error status:', error.response.status);
+        console.log('Error headers:', error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.log('Error request:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error message:', error.message);
+      }
+      console.log('Error config:', error.config);
+
+      throw (error && error.response && error.response.data) || error;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const clearData = useCallback(async => {
+    dispatch({
+      type: 'INITIAL',
+      payload: {
+        isAuthenticated: false,
+        isRegister: false,
+        isForgotPassword: false,
+        isVerifyEmail: false,
+        isCheckCode: false,
+        isChangePwd: false,
+        user: null,
+        data: null,
+        email: null,
+        access: null,
+        users: [],
+      },
+    });
+  }, []);
+
+  // ForgetPassword
+  const forgotPassword = useCallback(async email => {
+    const reponse = await axiosInstance.post('/auth/forgotPassword', {email});
+    const res = reponse.data;
+    if (res.code === 200) {
+      // AsyncStorage.setItem('current', res.data);
+      dispatch({
+        type: 'FORGOTPASS',
+        payload: {
+          isForgotPassword: true,
+          email: email,
+        },
+      });
+    } else {
+      dispatch({
+        type: 'FORGOTPASS',
+        payload: {
+          isForgotPassword: false,
+          msg: res.message,
+        },
+      });
+    }
+  }, []);
+
+  // CheckCode
+  const checkCode = useCallback(async (email, code) => {
+    console.log('---------email---------', email);
+    const reponse = await axiosInstance.post('/auth/verifyCode', {
+      email,
+      code,
+    });
+    console.log('==================', reponse.data);
+    const res = reponse.data;
+    if (res.code === 200) {
+      AsyncStorage.setItem('current', res.data);
+      dispatch({
+        type: 'CHECKCODE',
+        payload: {
+          // email: email,
+        },
+      });
+      return true;
+    } else {
+      return false;
+    }
+  }, []);
+
+  // Resend
+  const resend = useCallback(async data => {
+    const response = await axiosInstance.post('/auth/resendCode', {
+      email: data,
+    });
+    const res = response.data;
+    if (res.code === 'SUCCESS') {
+      return true;
+    } else {
+      return false;
+    }
+  }, []);
+
+  // ChangePWD
+  const changePassword = useCallback(async (email, password) => {
+    const response = await axiosInstance.post('/auth/resetPassword', {
+      email,
+      password,
+    });
+    console.log('090909', response.data);
+    const res = response.data;
+    if (res.code === 200) {
+      AsyncStorage.removeItem('current');
+      dispatch({
+        type: 'UPDATE',
+      });
+    } else {
+      return res.message;
+    }
+  }, []);
+
+  const tokenExpired = async exp => {
+    const currentTime = Date.now();
+
+    const timeLeft =
+      exp * 1000 - currentTime > 3600 * 1000 * 24 * 14
+        ? 3600 * 1000 * 24 * 14
+        : exp * 1000 - currentTime;
+
+    clearTimeout(expiredTimer);
+
+    expiredTimer = setTimeout(async () => {
+      console.log('Token expired');
+
+      logout();
+      await AsyncStorage.removeItem('accessToken');
+    }, timeLeft);
+  };
+
+  // LOGOUT
+  const logout = useCallback(() => {
+    setSession(null);
+    dispatch({
+      type: 'LOGOUT',
+    });
+  }, []);
+
+  const memoizedValue = useMemo(
+    () => ({
+      isInitialized: state.isInitialized,
+      isAuthenticated: state.isAuthenticated,
+      isRegister: state.isRegister,
+      isForgotPassword: state.isForgotPassword,
+      isVerifyEmail: state.isVerifyEmail,
+      isCheckCode: state.isCheckCode,
+      user: state.user,
+      access: state.access,
+      email: state.email,
+      data: state.data,
+      users: state.users,
+      msg: state.msg,
+      isChangePwd: state.isChangePwd,
+      method: 'jwt',
+      initialize,
+      login,
+      logout,
+      register,
+      checkCode,
+      forgotPassword,
+      logout,
+      resend,
+      clearData,
+      changePassword,
+    }),
+    [
+      state.isAuthenticated,
+      state.isInitialized,
+      state.isRegister,
+      state.isForgotPassword,
+      state.isVerifyEmail,
+      state.isCheckCode,
+      state.user,
+      state.users,
+      state.access,
+      state.msg,
+      state.email,
+      state.data,
+      state.isChangePwd,
+      initialize,
+      login,
+      logout,
+      register,
+      checkCode,
+      forgotPassword,
+      logout,
+      resend,
+      clearData,
+      changePassword,
+    ],
+  );
+
+  return (
+    <AuthContext.Provider value={memoizedValue}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export {AuthProvider, useAuth};

@@ -1,0 +1,84 @@
+# Node.js
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# macOS
+.DS_Store
+
+# Xcode
+# build/
+ios/Pods/
+ios/*.xcodeproj/
+ios/*.xcworkspace/
+ios/*/xcuserdata/
+ios/*/*.xcuserstate
+ios/build/
+ios/DerivedData/
+
+# Android
+android/.gradle/
+android/app/build/
+android/build/
+android/.idea/
+android/local.properties
+android/gradle/wrapper/gradle-wrapper.properties
+android/.cxx/
+android/app/*.iml
+android/*.iml
+android/gradlew
+android/gradlew.bat
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# Miscellaneous
+*.lock
+*.pdb
+*.zip
+*.map
+*.coverage
+*.hprof
+*.orig
+*.pyc
+*.env
+*.DS_Store
+*.pem
+*.crt
+*.cer
+*.p12
+
+# Buck
+.buckconfig.local
+.buckversion
+.buckd/
+buck-out/
+\*\*/buck-out/
+
+# Bazel
+bazel-*
+
+# Expo
+.expo/
+.expo-shared/
+
+# Generated files
+# Uncomment if using TypeScript
+# build/
+# dist/
+
+# react-native/packager
+.packager.js
+
+# Metro
+.expo
+web-build/
+
+# React Native Windows
+windows/
