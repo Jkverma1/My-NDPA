@@ -14,6 +14,7 @@ import {
   Platform,
   PermissionsAndroid,
   ScrollView,
+  SafeAreaView
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -495,6 +496,7 @@ const ReviewFriendSection = ({route}) => {
   );
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <CustomDialog
         modalVisible={modalVisible}
@@ -517,7 +519,7 @@ const ReviewFriendSection = ({route}) => {
       />
 
       <Header
-        visible={false}
+        visible={true}
         text={'My Friend'}
         color={'#FFFBF8'}
         editalbe={false}
@@ -809,12 +811,17 @@ const ReviewFriendSection = ({route}) => {
         message="Don't give up"
       />
     </View>
+    </SafeAreaView>
   );
 };
 
 export default ReviewFriendSection;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFBF8',
+  },
   container: {
     flex: 1,
     alignItems: 'center',

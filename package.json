@@ -2,11 +2,6 @@
   "name": "MYNDPA",
   "version": "0.0.1",
   "private": true,
-  "rnpm": {
-    "assets": [
-      "./assets/fonts/"
-    ]
-  },
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
@@ -17,7 +12,6 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
     "@react-native-community/blur": "^4.4.0",
-    "@react-native-community/checkbox": "^0.5.17",
     "@react-native-community/datetimepicker": "^8.0.1",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-navigation/native": "^6.1.17",
@@ -30,14 +24,11 @@
     "ffmpeg-kit-react-native": "^6.0.2",
     "geolib": "^3.3.4",
     "metro-react-native-babel-preset": "^0.77.0",
-    "microsoft-cognitiveservices-speech-sdk": "^1.38.0",
     "react": "18.2.0",
     "react-native": "0.74.1",
-    "react-native-audio-recorder-player": "^3.6.7",
-    "react-native-bootsplash": "^5.5.3",
+    "react-native-audio-recorder-player": "^3.6.10",
     "react-native-calendars": "^1.1305.0",
     "react-native-circular-progress-indicator": "^4.4.2",
-    "react-native-color-matrix-image-filters": "^6.0.9",
     "react-native-country-picker-modal": "^2.0.0",
     "react-native-date-picker": "^5.0.3",
     "react-native-dotenv": "^3.4.11",

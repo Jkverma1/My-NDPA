@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     padding: 16,
     height: 100,
     width: '100%',
+    zIndex: 1,
   },
   textContainer: {
     marginLeft: 16,

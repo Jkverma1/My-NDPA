@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
+import {BlurView} from '@react-native-community/blur';
 import {
   View,
   Image,
@@ -13,18 +14,18 @@ const cafe_background = require('../../../assets/icons/Personal_Identity.png');
 const close_ico = require('../../../assets/icons/m_close_ico.png');
 const idea_ico = require('../../../assets/icons/learn/idea_ico.png');
 
-const { width: screenWidth } = Dimensions.get('window');
+const {width: screenWidth} = Dimensions.get('window');
 
-const EnterCafe = ({ navigation }) => {
+const EnterCafe = ({navigation}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setModalVisible(true);
-    }, 2000); 
+    }, 200);
 
     return () => clearTimeout(timer);
-  }, []); 
+  }, []);
 
   const handleClosePress = () => {
     setModalVisible(false);
@@ -33,24 +34,39 @@ const EnterCafe = ({ navigation }) => {
 
   const handleStart = () => {
     setModalVisible(false);
-    navigation.navigate('TypingSection');
+    navigation.navigate('ReadingPage');
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.imageContainer} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        style={styles.imageContainer}
+        onPress={() => setModalVisible(true)}
+      >
         <Image source={cafe_background} style={styles.fullScreenImage} />
       </TouchableOpacity>
-      <Modal visible={modalVisible} transparent={true} animationType="fade">
+      <Modal visible={modalVisible} transparent={true} animationType="slide">
         <View style={styles.overlay}>
+          <BlurView
+            style={[
+              styles.blurView,
+              {backgroundColor: 'rgba(255, 218, 185, 0.3)'},
+            ]}
+            blurType="light"
+            blurAmount={3}
+            reducedTransparencyFallbackColor="white"
+          />
           <View style={styles.modalContainer}>
-            <TouchableOpacity style={styles.closeIconContainer} onPress={handleClosePress}>
+            <TouchableOpacity
+              style={styles.closeIconContainer}
+              onPress={handleClosePress}
+            >
               <Image source={close_ico} style={styles.closeIcon} />
             </TouchableOpacity>
             <Image source={idea_ico} style={styles.centerImage} />
             <Text style={styles.text}>
-              Imagine you’re at the coffee shop.{"\n"}
-              Let’s try to make friends{"\n"}
+              Imagine you’re at the coffee shop.{'\n'}
+              Let’s try to make friends{'\n'}
               with someone.
             </Text>
             <TouchableOpacity style={styles.button} onPress={handleStart}>
@@ -66,7 +82,7 @@ const EnterCafe = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFDAB90D',
+    backgroundColor: '#FFFFFF',
   },
   imageContainer: {
     flex: 1,
@@ -78,19 +94,21 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: '#FFDAB966',
     justifyContent: 'center',
     alignItems: 'center',
-    background: 'linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(0deg, rgba(255, 218, 185, 0.4), rgba(255, 218, 185, 0.4))',
+    background:
+      'linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(0deg, rgba(255, 218, 185, 0.4), rgba(255, 218, 185, 0.4))',
   },
   modalContainer: {
     width: screenWidth - 48,
-    margin: 24,
     borderRadius: 10,
     backgroundColor: '#fff',
-    padding: 10,
     alignItems: 'center',
     position: 'relative',
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 24,
   },
   closeIconContainer: {
     position: 'absolute',
@@ -105,12 +123,12 @@ const styles = StyleSheet.create({
   centerImage: {
     width: 72,
     height: 72,
-    marginTop: 24,
     resizeMode: 'contain',
   },
   text: {
-    fontFamily: 'Open Sans',
+    fontFamily: 'OpenSans-SemiBold',
     fontSize: 18,
+    color: '#1E1D20',
     fontWeight: '600',
     lineHeight: 24.51,
     textAlign: 'center',
@@ -130,6 +148,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 21,
+    fontHeight: 28,
+    fontFamily: 'OpenSans-SemiBold',
+  },
+  blurView: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
 });
 

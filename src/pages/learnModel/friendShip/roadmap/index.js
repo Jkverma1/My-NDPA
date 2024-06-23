@@ -1,14 +1,14 @@
 import React from 'react';
 import { Image, View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-const personalId_road = require('../../../../../assets/icons/learn/friendshipt_road.png')
+const personalId_road = require('../../../../../assets/icons/learn/friendship/friendship_road.png')
 
 const RoadMap = () => {
     const navigation = useNavigation();
   return (
     <View style={styles.container}>
       <Image style={styles.road} source={personalId_road} />
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AppearanceSection')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('FriendshipProcessSection',{ move: false , part: 1 })}>
         <Text style={styles.buttonText}>Start</Text>
       </TouchableOpacity>
     </View>

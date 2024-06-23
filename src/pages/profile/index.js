@@ -14,7 +14,7 @@ import AccessMenu from './accessMenu/index';
 // import CallKey from './callKey';
 // import EditAvatar from './editAvatar';
 import Footer from '../../components/footer';
-import {LogBox, View} from 'react-native';
+import {LogBox, View, SafeAreaView} from 'react-native';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -23,6 +23,7 @@ const Stack = createStackNavigator();
 
 const Main = () => {
   return (
+    <SafeAreaView style={{flex: 1, backgroundColor: "#fff"}}>
     <View style={{flex: 1}}>
       <Stack.Navigator initialRouteName="MainPage">
         <Stack.Screen
@@ -44,6 +45,7 @@ const Main = () => {
       </Stack.Navigator>
       <Footer state={4} />
     </View>
+    </SafeAreaView>
   );
 };
 

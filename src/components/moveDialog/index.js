@@ -17,8 +17,8 @@ const MoveDialog = ({ modalVisible, setModalVisible, handleClick, handleClickSki
             <TouchableOpacity style={styles.button} onPress={handleClick}>
               <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleClickSkip}>
-              <Text style={styles.buttonText}>Skip</Text>
+            <TouchableOpacity style={[styles.button, styles.closeButton]} onPress={handleClickSkip}>
+              <Text style={[styles.buttonText, styles.closeButtonText]}>Skip</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   button: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#F08080',
     borderRadius: 10,
     padding: 10,
     elevation: 2,
@@ -73,8 +73,16 @@ const styles = StyleSheet.create({
     margin: 5,
     alignItems: 'center',
   },
+  closeButton: {
+    backgroundColor: "transparent",
+    borderColor: "#F08080",
+    borderWidth: 1,
+  },
+  closeButtonText: {
+    color: '#F08080',
+  },
   buttonText: {
-    color: 'white',
+    color: '#FFF',
     fontWeight: 'bold',
     textAlign: 'center',
   },

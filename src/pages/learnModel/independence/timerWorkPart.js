@@ -116,32 +116,14 @@ const TimerWorkSection = ({route}) => {
 
   return (
     <View style={styles.container}>
-      <RateModal
+      {/* <RateModal
         modalVisible={feedback}
         setModalVisible={setModalVisible}
         handleClickClose={handleClickClose}
         handleClick={handleRating}
         title="Great Job!"
         description="Rate how the task went"
-      />
-      <CustomDialog
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        handleClick={handleClick}
-        icon={task_ico}
-        title="Step 3. Work"
-        description="Let's get started on working through your task"
-      />
-
-      <RewardDialog
-        modalVisible={move}
-        setModalVisible={setModalVisible}
-        handleClick={handleClickMove}
-        title="Great job!"
-        text="You've finished typing level!NN  Claim your reward."
-        buttonText="Finish"
-        icon={reward_ico}
-      />
+      /> */}
 
       <Header
         visible={false}
@@ -155,7 +137,8 @@ const TimerWorkSection = ({route}) => {
           alignItems: 'center',
           flex: 1,
           gap: 30,
-        }}>
+        }}
+      >
         <Text style={styles.title}>{'Turn on the timer to start'}</Text>
         <Svg height="250" width="250" viewBox="0 0 250 250">
           <Circle
@@ -186,7 +169,8 @@ const TimerWorkSection = ({route}) => {
               position: 'absolute',
               top: 80,
               left: 50,
-            }}>
+            }}
+          >
             {formattedHour + ':' + formattedMinutes}
           </Text>
         </Svg>
@@ -201,7 +185,10 @@ const TimerWorkSection = ({route}) => {
             borderRadius: 45,
             backgroundColor: '#F08080',
           }}
-          onPress={() => handleContinue()}>
+          onPress={() => {
+            running ? handleClickMove() : handleContinue();
+          }}
+        >
           <Text style={styles.b3_text}>{!running ? 'Start' : 'Finish'}</Text>
         </TouchableOpacity>
       </View>

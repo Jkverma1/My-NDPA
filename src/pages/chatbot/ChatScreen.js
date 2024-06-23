@@ -109,8 +109,6 @@ const ChatScreen = () => {
   const [selectedTopicId, setSelectedTopicId] = useState(null);
   const {user} = useAuth();
 
-  console.log(user.id);
-
   const maxLengthOfDescription = (screenWidth * 2 * 0.8) / 16;
 
   const trimDescription = description => {
@@ -142,7 +140,7 @@ const ChatScreen = () => {
           {
             text: question,
             topicId: selectedTopicId,
-            userId: user.id,
+            userId: user?.id,
           },
           {
             headers: {
@@ -381,7 +379,7 @@ const ChatScreen = () => {
                 </Text>
               </View>
               <View style={styles.rootViewTopicList}>
-                {topics.map((topic, index) => {
+                {topics?.map((topic, index) => {
                   if (index > 2 && isTopicHidden) {
                     return null;
                   } else {

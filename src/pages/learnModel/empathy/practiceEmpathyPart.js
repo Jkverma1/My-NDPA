@@ -10,6 +10,7 @@ import {
   Text,
   Dimensions,
   TouchableOpacity,
+  SafeAreaView
 } from 'react-native';
 
 import {useNavigation, useRoute} from '@react-navigation/native';
@@ -173,6 +174,7 @@ const PracticeEmpathySection = () => {
   );
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <CustomDialog
         modalVisible={modalVisible}
@@ -185,11 +187,11 @@ const PracticeEmpathySection = () => {
 
       <RewardDialog
         modalVisible={move}
-        setModalVisible={setModalVisible}
+        setModalVisible={setMove}
         handleClick={handleClickMove}
         title="Great job!"
         text="You've finished typing level!NN  Claim your reward."
-        buttonText="Go to Step 2"
+        buttonText="Finish"
         icon={reward_ico}
       />
 
@@ -220,12 +222,17 @@ const PracticeEmpathySection = () => {
         <Text style={styles.b3_text}>Next</Text>
       </TouchableOpacity>
     </View>
+    </SafeAreaView>
   );
 };
 
 export default PracticeEmpathySection;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFBF8',
+  },
   container: {
     flex: 1,
     alignItems: 'center',

@@ -68,7 +68,7 @@ const ChangePwd = () => {
   return (
     <View style={styles.container}>
       <Header
-        visible={false}
+        visible={true}
         text={'Change Password'}
         color={'white'}
         editalbe={false}

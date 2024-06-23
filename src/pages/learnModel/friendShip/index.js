@@ -13,6 +13,7 @@ import QualitiesSection from './qualitiesPart';
 import ReviewFriendSection from './reviewFriendShipPart';
 import PercentFriendShipSection from './percentFriendShipPart';
 import {LogBox} from 'react-native';
+import FriendshipProcess from './friendshipProcess';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -25,6 +26,11 @@ const MainFriendShipSection = () => {
       <Stack.Screen
         name="StartFriendShipSection"
         component={StartFriendShipSection}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="FriendshipProcessSection"
+        component={FriendshipProcess}
         options={{headerShown: false}}
       />
       <Stack.Screen

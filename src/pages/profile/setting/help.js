@@ -14,6 +14,7 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  Linking
 } from 'react-native';
 
 import Header from '../../../components/header';
@@ -27,23 +28,21 @@ const up_arrow_ico = require('../../../../assets/icons/profile/setting/up_arrow_
 const reviewData =
   'We are here to help you with anything and \neverything on my NDPA';
 const generalData = [
-  {text: 'Your agreement', value: 'Your agreement'},
+  {text: 'Why is My NDPA catered towards?', value: 'My NDPA, at this stage is focused on engaging with neurodiverse individuals that are specifically ADHD or Autistic and high functioning. This will fuel app development and ensure a valued product, where we will then be able to cater towards a broader range of functionalities within neurodiversity.'},
   {
-    text: 'Age restristions',
-    value: 'Age restristions',
+    text: 'What are the main features of My NDPA?',
+    value: 'Speech and communication: focuses on key self-awareness and approaches to tackling wellbeing and crisis prevention. Creative outlet: Serves as a safe space to interact with posts that are created by like-minded individuals. This section will also allow individuals to explore their creative abilities and use AI to fuel and bring their imagination to life. Travel independence: Is cultivated with improved UI and UX design which at this stage is primarily served via google satellite images of where users are located.',
   },
   {
-    text: 'Basic use requirements',
-    value: 'Basic use requirements',
+    text: 'Where can you access My NDPA?',
+    value: 'By downloading our App on the App Store or Google Play Store from the end of June which is when our full App will become available to the public.',
   },
   {
-    text: 'Your account',
-    value: 'Your account',
+    text: 'How does My NDPA ensure my data/personal information is protected?',
+    value: <>My NDPA Abides by GDPR (Global Data Protection) by using security assured by Microsoft Azure. We do not sell data and ensure absolute privacy with this app, with high security measures in place – to cater to the needs of both parents and teens. Please see our privacy policy <TouchableOpacity onPress={()=> {Linking.openURL('https://myndpa.co.uk/privacy-policy/');}}><Text style={{color: '#F08080',fontSize: 16, textDecorationLine: "underline"}}>here</Text></TouchableOpacity></>,
   },
-  {text: 'Use license', value: 'Use license'},
 ];
 
-// Enable LayoutAnimation on Android
 if (
   Platform.OS === 'android' &&
   UIManager.setLayoutAnimationEnabledExperimental
@@ -57,24 +56,24 @@ const HelpPage = () => {
   const toggleExpand = index => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     if (expandedIndex === index) {
-      setExpandedIndex(null); // Collapse the row if it's already expanded
+      setExpandedIndex(null); 
     } else {
-      setExpandedIndex(index); // Expand the row if it's not the currently expanded one
+      setExpandedIndex(index); 
     }
   };
   return (
     <View style={styles.container}>
-      <Header visible={false} text={'Help'} color={'white'} editalbe={false} />
+      <Header visible={true} text={'Help'} color={'white'} editalbe={false} />
       <ScrollView>
         <View style={styles.container_s}>
           <Text style={styles.text}>{reviewData}</Text>
-          <Text style={styles.text}>FAQs</Text>
+          <Text style={styles.titleText}>FAQs</Text>
           {generalData.map((row, rowIndex) => (
             <View key={rowIndex}>
               <View style={styles.boxBackground}>
                 <View style={{flexDirection: 'column', gap: 10}}>
                   <TouchableOpacity
-                    style={styles.row}
+                    style={[styles.row]}
                     onPress={() => toggleExpand(rowIndex)}>
                     <Text style={styles.title}>{row.text}</Text>
                     {expandedIndex === rowIndex ? (
@@ -123,19 +122,32 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#F08080',
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'OpenSans-Medium',
     fontWeight: '600',
+    paddingBottom: 14,
+    maxWidth: screenWidth *8 /10
     // textAlign: 'left',
+  },
+  titleText:{
+    color: 'black',
+    fontSize: 16,
+    fontFamily: 'OpenSans-Medium',
+    fontWeight: '600',
+  },
+  content: {
+    color: 'black',
+    fontSize: 16,
+    fontFamily: 'OpenSans-Medium',
+    fontWeight: '400',
   },
   text: {
     color: 'black',
     fontSize: 16,
     fontFamily: 'OpenSans-Medium',
-    fontWeight: '600',
+    fontWeight: '400',
     // textAlign: 'left',
   },
-
   icon: {
     justifyContent: 'center',
     width: 32,

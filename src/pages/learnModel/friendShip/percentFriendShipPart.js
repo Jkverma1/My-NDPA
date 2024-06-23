@@ -1,180 +1,219 @@
-import 'react-native-gesture-handler';
-
-// Import React and Component
-import React, {useState, useEffect} from 'react';
-
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
   Text,
   Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import CircularProgress from 'react-native-circular-progress-indicator';
-import {ScrollView} from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const COLOR_PRIMARY = '#F08080';
+const FONT_FAMILY_MEDIUM = 'OpenSans-Medium';
 
-const PercentFriendShipSection = () => {
+const PercentFriendshipSection = () => {
+  const route = useRoute();
+  const { param } = route.params;
   const navigation = useNavigation();
-  const dispatch = useDispatch();
+  const [calculatedPercentage, setCalculatedPercentage] = useState(0);
 
-  const Quizs = [
+  const quizData = [
     {
-      id: 1,
-      quiz: '1. Hi! My name is Tom. What is your name?',
-      answer: '✓ Hi! My name is David.',
-      type: true,
-    },
-    {
-      id: 2,
-      quiz: '2. Nice to meet you.How old are you?',
-      answer: '✓ I`m 12 years old.',
-      type: true,
-    },
-    {
-      id: 3,
-      quiz: '3. I have ADHD. What about you?',
-      answer: '✓ I have dyslexia.',
-      type: true,
-    },
-    {
-      id: 4,
-      quiz: "4. What's your gender identity?",
-      answer: '✕ I identify as female.',
-      correctAnswer: 'I identify as male.',
-      type: false,
+      step: "Step 3. Review",
+      questions: [
+        {
+          id: 1,
+          text: "Hey, I wanted to ask you about your friend. What's his/her name?",
+          answer: [`My best friend is ${param.param.name}.`],
+          correctAnswer: [`My best friend is ${param.param.name}.`],
+        },
+        {
+          id: 2,
+          text: "Cool. What does Alex look like? Describe his hair.",
+          answer: [`He has ${param.param.hair} hair.`],
+          correctAnswer: [`He has ${param.param.hair} hair.`],
+        },
+        {
+          id: 3,
+          text: "How about Alex eyes?",
+          answer: [`He has ${param.param.eye} eyes.`],
+          correctAnswer: [`He has ${param.param.eye} eyes.`],
+        },
+        {
+          id: 4,
+          text: "What qualities does Alex have?",
+          answer: [`Alex is ${param.friendLike.slice(0, param.friendLike.length - 1).join(', ')} and ${param.friendLike[param.friendLike.length - 1]}.`],
+          correctAnswer: [`Alex is ${param.friendLike.slice(0, param.friendLike.length - 1).join(', ')} and ${param.friendLike[param.friendLike.length - 1]}.`],
+        },
+        {
+          id: 5,
+          text: "Is there anything you don't like about Alex?",
+          answer: [`Alex is ${param.friendDislike.slice(0, param.friendDislike.length - 1).join(', ')} and ${param.friendDislike[param.friendDislike.length - 1]}.`],
+          correctAnswer: [`Alex is ${param.friendDislike.slice(0, param.friendDislike.length - 1).join(', ')} and ${param.friendDislike[param.friendDislike.length - 1]}.`],
+        },
+        {
+          id: 6,
+          text: "What do you look for in a friend?",
+          answer: [`I value ${param.look.slice(0, param.look.length - 1).join(', ')} and ${param.look[param.look.length - 1]} in a friend.`],
+          correctAnswer: [`I value ${param.look.slice(0, param.look.length - 1).join(', ')} and ${param.look[param.look.length - 1]} in a friend.`],
+        }
+      ]
     },
   ];
 
+  const calculateCorrectPercentage = () => {
+    let totalCorrectAnswers = 0;
+    let totalPossibleCorrectAnswers = 0;
+    let totalAnsweredQuestions = 0;
+
+    quizData.forEach(step => {
+      step.questions.forEach(question => {
+        totalAnsweredQuestions++;
+        const correctAnswers = question.correctAnswer;
+        const selectedAnswers = question.answer;
+
+        const correctSelectedAnswers = selectedAnswers.filter(answer => correctAnswers.includes(answer));
+        totalCorrectAnswers += correctSelectedAnswers.length;
+        totalPossibleCorrectAnswers += correctAnswers.length;
+      });
+    });
+
+    if (totalAnsweredQuestions > 0) {
+      setCalculatedPercentage((totalCorrectAnswers / totalPossibleCorrectAnswers) * 100);
+    }
+  };
+
+  useEffect(() => {
+    calculateCorrectPercentage();
+  }, []);
+
+  const checkAnswer = (answer, correctAnswers) => {
+    return correctAnswers.includes(answer);
+  };
+
+  const renderSuggestedAnswers = (selectedAnswers, correctAnswers) => {
+    const suggestedAnswers = correctAnswers.filter(answer => !selectedAnswers.includes(answer));
+    return (
+      <View>
+        {suggestedAnswers > 0 && <View>
+          <Text style={styles.suggestedText}>
+            <Text style={{color: COLOR_PRIMARY}}>
+              Suggested answers:{" "}
+            </Text>
+            {suggestedAnswers.join(', ')}
+          </Text>
+        </View>
+        }
+      </View>
+    );
+  };
+
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <Text
-          style={[
-            styles.title,
-            {marginTop: 50, fontSize: 22, fontWeight: '600'},
-          ]}>
-          Friendship
-        </Text>
-        <View
-          style={{marginTop: 30, alignContent: 'center', alignItems: 'center'}}>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={[styles.title, styles.titleMargin]}>Withdrawal</Text>
+        <View style={styles.circularProgressContainer}>
           <CircularProgress
-            value={75}
+            value={calculatedPercentage}
             radius={screenWidth / 5}
-            inActiveStrokeColor={'#F08080'}
-            activeStrokeColor={'#F08080'}
+            inActiveStrokeColor={COLOR_PRIMARY}
+            activeStrokeColor={COLOR_PRIMARY}
             inActiveStrokeOpacity={0.2}
             progressValueColor={'black'}
             valueSuffix={'%'}
           />
-          <Text
-            style={[
-              styles.title,
-              {fontWeight: '700', fontSize: 28, marginTop: 25},
-            ]}>
-            Great Job!
-          </Text>
-          <Text style={[styles.text, {textAlign: 'center'}]}>
-            {'You`ve answered correctly on 1\nquestion. Keep learning!'}
+          <Text style={[styles.title, styles.greatJobText]}>Great Job!</Text>
+          <Text style={[styles.text, styles.centerText]}>
+            {`You've answered correctly on ${quizData.length} question${quizData.length > 1 ? 's' : ''}. Keep learning!`}
           </Text>
         </View>
-        <View style={{width: (screenWidth * 9) / 10, marginTop: 15}}>
+        <View style={styles.quizContainer}>
           <View style={styles.underline} />
-          <Text style={[styles.sub_title]}>Step 1. Typing</Text>
-          {Quizs.map(quiz => (
-            <View key={quiz.id}>
-              <Text style={[styles.text, {marginTop: 10}]}>{quiz.quiz}</Text>
-              <Text
-                style={[
-                  quiz.type ? styles.welcomeText : styles.incorrectText,
-                  {marginTop: 10},
-                ]}>
-                {quiz.answer}
-              </Text>
-              {!quiz.type && (
-                <Text style={[styles.correctText, {marginTop: 10}]}>
-                  {`Correct answer: ${quiz.correctAnswer}`}
-                </Text>
-              )}
-              <View style={[styles.underline, {marginTop: 10}]} />
+          {quizData.map((step, stepIndex) => (
+            <View key={stepIndex}>
+              <Text style={styles.subTitle}>{step.step}</Text>
+              {step.questions.map((question) => (
+                <View key={question.id}>
+                  <Text style={[styles.text, styles.quizText]}>{question.text}</Text>
+                  {question.answer.map((answer, answerIndex) => (
+                    <Text
+                      key={answerIndex}
+                      style={
+                        checkAnswer(answer, question.correctAnswer)
+                          ? styles.correctText
+                          : styles.incorrectText
+                      }
+                    >
+                      {checkAnswer(answer, question.correctAnswer) ? "✓ " : "✕ "}
+                      {answer}
+                    </Text>
+                  ))}
+                  {renderSuggestedAnswers(question.answer, question.correctAnswer)}
+                  <View style={styles.underline} />
+                </View>
+              ))}
             </View>
           ))}
         </View>
-        <View
-          style={{
-            marginTop: 15,
-            alignContent: 'center',
-            alignItems: 'center',
-            gap: 10,
-            marginBottom: 50,
-          }}>
+        <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: (screenWidth * 8) / 10,
-              height: 57,
-              borderRadius: 45,
-              backgroundColor: '#F08080',
-            }}
-            onPress={() => navigation.navigate('MainPage')}>
-            <Text style={styles.b1_text}>Finish</Text>
+            style={[styles.button, styles.submitButton]}
+            onPress={() => navigation.navigate('MainPage')}
+          >
+            <Text style={styles.b1Text}>Finish</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              width: (screenWidth * 8) / 10,
-              height: 57,
-              borderColor: '#F08080',
-              borderWidth: 1,
-              borderRadius: 45,
-              backgroundColor: 'white',
-            }}
-            onPress={() => navigation.navigate('StartPeerSection')}>
-            <Text style={styles.b2_text}>Try Again</Text>
+            style={[styles.button, styles.retryButton]}
+            onPress={() => navigation.navigate('StartWithdrawalSection')}
+          >
+            <Text style={styles.b2Text}>Try Again</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default PercentFriendShipSection;
-
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
+    backgroundColor: '#FFFBF8',
+  },
+  container: {
+    flexGrow: 1,
     alignItems: 'center',
     backgroundColor: 'white',
-    width: screenWidth,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#F08080',
-    height: 40,
-    width: (screenWidth * 9) / 10,
-    marginTop: -40,
-    padding: 1,
-    paddingLeft: 30,
-    borderRadius: 40,
-    fontFamily: 'OpenSans-Regular',
+    paddingHorizontal: 24,
   },
   title: {
     color: 'black',
-    fontFamily: 'OpenSans-Medium',
+    fontFamily: FONT_FAMILY_MEDIUM,
     textAlign: 'center',
   },
-  sub_title: {
-    color: 'black',
-    fontFamily: 'OpenSans-Medium',
-    fontSize: 19,
+  titleMargin: {
+    marginTop: 50,
+    fontSize: 22,
+    fontWeight: '600',
+  },
+  circularProgressContainer: {
+    marginTop: 30,
+    alignItems: 'center',
+  },
+  greatJobText: {
     fontWeight: '700',
-    marginTop: 10,
+    fontSize: 28,
+    marginTop: 25,
+  },
+  centerText: {
+    textAlign: 'center',
+  },
+  quizContainer: {
+    width: (screenWidth * 9) / 10,
+    marginTop: 15,
   },
   underline: {
     height: 1.5,
@@ -182,35 +221,73 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 1,
   },
+  subTitle: {
+    color: 'black',
+    fontFamily: FONT_FAMILY_MEDIUM,
+    fontSize: 19,
+    fontWeight: '700',
+    marginTop: 10,
+  },
   text: {
     color: 'black',
     fontSize: 18,
     fontFamily: 'OpenSans-Regular',
     marginTop: 5,
   },
-  welcomeText: {
+  quizText: {
+    marginVertical: 14,
+    marginTop: 20,
+    fontSize: 16,
+    lineHeight: 21,
+    fontFamily: 'OpenSans',
+  },
+  suggestedText: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontFamily: 'OpenSans',
+    marginVertical: 10,
+  },
+  correctText: {
+    marginVertical: 6,
     color: '#23B80C',
-    fontSize: 18,
-    fontFamily: 'OpenSans-Regular',
   },
   incorrectText: {
     color: '#FF5050',
-    fontSize: 18,
-    fontFamily: 'OpenSans-Regular',
   },
-  correctText: {
-    color: '#F08080',
-    fontSize: 18,
-    fontFamily: 'OpenSans-Regular',
+  correctAnswerText: {
+    color: COLOR_PRIMARY,
   },
-  b1_text: {
+  buttonContainer: {
+    marginTop: 15,
+    alignItems: 'center',
+    marginBottom: 50,
+  },
+  button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: (screenWidth * 8) / 10,
+    height: 57,
+    borderRadius: 45,
+    marginVertical: 5,
+  },
+  submitButton: {
+    backgroundColor: COLOR_PRIMARY,
+  },
+  retryButton: {
+    borderColor: COLOR_PRIMARY,
+    borderWidth: 1,
+    backgroundColor: 'white',
+  },
+  b1Text: {
     color: 'white',
     fontSize: 19,
     fontFamily: 'OpenSans-Bold',
   },
-  b2_text: {
-    color: '#F08080',
+  b2Text: {
+    color: COLOR_PRIMARY,
     fontSize: 19,
     fontFamily: 'OpenSans-Bold',
   },
 });
+
+export default PercentFriendshipSection;

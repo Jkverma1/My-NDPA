@@ -1,8 +1,7 @@
 import 'react-native-gesture-handler';
 
 // Import React and Component
-import React, {useState} from 'react';
-
+import React, { useState } from 'react';
 import {
   Image,
   View,
@@ -12,7 +11,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 
 import Header from '../../../components/header';
 import DeleteModal from '../../../components/deleteModal';
@@ -23,14 +22,15 @@ const mdi_delete = require('../../../../assets/icons/profile/setting/mdi_delete.
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
-const boxData = [
+
+const initialBoxData = [
   {
-    title: 'Reminder Name',
+    title: 'Reminder Name 1',
     time: 'Every 20 minutes',
     day: 'Wednesday, Friday',
   },
   {
-    title: 'Reminder Name',
+    title: 'Reminder Name 2',
     time: 'Every 20 minutes',
     day: 'Everyday',
   },
@@ -40,53 +40,72 @@ const TimeSupport = () => {
   const navigation = useNavigation();
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [boxData, setBoxData] = useState(initialBoxData);
+  const [reminderToDelete, setReminderToDelete] = useState(null);
+
+  const isFocused = useIsFocused();
+
   const handlePress = () => {
-    console.log('goto');
-    navigation.navigate('TimeSettingPage');
+    navigation.navigate('TimeSettingPage', { addReminder });
   };
 
-  console.log('-------------------', showModal);
+  const addReminder = (newReminder) => {
+    setBoxData([...boxData, newReminder]);
+  };
+
+  const handleDeletePress = (index) => {
+    setReminderToDelete(index);
+    setShowModal(true);
+  };
+
+  const handleConfirmDelete = () => {
+    const newBoxData = boxData.filter((_, index) => index !== reminderToDelete);
+    setBoxData(newBoxData);
+    setShowModal(false);
+  };
+
+  const handleCancelDelete = () => {
+    setShowModal(false);
+    setReminderToDelete(null);
+  };
 
   return (
     <View style={styles.container}>
       <DeleteModal
         modalVisible={showModal}
-        handleClick={setShowModal}
-        // handleClick={handleClickMove}
-        text="Are you sure to delete NN'Name of the reminder'NN   reminder "
-        visible={true}
+        handleClick={handleCancelDelete}
+        handleConfirm={handleConfirmDelete}
+        text={`Are you sure you want to delete "${boxData[reminderToDelete]?.title}" reminder?`}
       />
 
       <Header
-        visible={false}
+        visible={true}
         text={'Time Support'}
         color={'white'}
-        editalbe={true}
+        editMode={editMode}
         setEdit={setEditMode}
       />
       <ScrollView>
         <View style={styles.container_s}>
           {boxData.map((row, rowIndex) => (
-            <View key={rowIndex} style={{width: (screenWidth * 9) / 10}}>
+            <View key={rowIndex} style={{ width: (screenWidth * 9) / 10 }}>
               <Text style={styles.text}>{row.title}</Text>
               <View style={styles.boxBackground}>
-                <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                   <Image source={clock_outline} style={styles.iconClock} />
                   <Text style={styles.text}>{row.time}</Text>
                 </View>
               </View>
               <View style={styles.boxBackground}>
-                <View
-                  style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
                   <Image source={vector} style={styles.iconCal} />
                   <Text style={styles.text}>{row.day}</Text>
                 </View>
               </View>
               <View style={styles.underline} />
               <TouchableOpacity
-                onPress={() => setShowModal(true)}
-                style={{position: 'absolute', bottom: 50, right: 0}}>
+                onPress={() => handleDeletePress(rowIndex)}
+                style={{ position: 'absolute', bottom: 50, right: 0 }}>
                 <Image source={mdi_delete} />
               </TouchableOpacity>
             </View>
@@ -113,18 +132,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
   },
-
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: (screenWidth * 9) / 10,
-    alignSelf: 'center',
-  },
   text: {
     color: 'black',
     fontSize: 20,
     fontFamily: 'OpenSans-Medium',
-    // textAlign: 'left',
   },
   startButton: {
     justifyContent: 'center',
@@ -153,16 +164,13 @@ const styles = StyleSheet.create({
   boxBackground: {
     flexDirection: 'row',
     alignItems: 'center',
-    // justifyContent: 'space-between',
     width: (screenWidth * 9) / 10,
     height: 50,
   },
-
   underline: {
     marginTop: 5,
     height: 1,
     backgroundColor: '#1E1D2033',
     width: '92%',
-    // marginTop: 1,
   },
 });

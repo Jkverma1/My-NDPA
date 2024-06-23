@@ -27,15 +27,13 @@ import CommunitySection from './src/pages/community/index';
 import ChatSection from './src/pages/chat/index';
 import ChatbotSection from './src/pages/chatbot/index'
 
-import BootSplash from 'react-native-bootsplash';
-
 const Stack = createStackNavigator();
 
 function App() {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <NavigationContainer onReady={() => BootSplash.hide({fade: true})}>
+        <NavigationContainer>
           <Stack.Navigator initialRouteName="Fpage">
             <Stack.Screen
               name="Fpage"

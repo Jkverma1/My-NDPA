@@ -1,11 +1,19 @@
-import React, {useState} from 'react';
-import {Modal, View, Text, Button, StyleSheet} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Modal, View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 
-const DeleteModal = ({modalVisible, handleClick, text}) => {
+const screenWidth = Dimensions.get('window').width;
+
+const DeleteModal = ({ modalVisible, handleClick, text }) => {
   const [isVisible, setIsVisible] = useState(modalVisible);
+
+  useEffect(() => {
+    setIsVisible(modalVisible);
+  }, [modalVisible]);
+
   const handleClose = () => {
     setIsVisible(false);
   };
+
   return (
     <Modal
       transparent={true}
@@ -16,8 +24,20 @@ const DeleteModal = ({modalVisible, handleClick, text}) => {
       <View style={styles.centeredView}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>{text}</Text>
-          <Button title="Cancel" onPress={handleClose} />
-          <Button title="Delete" onPress={handleClick} />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: '#F08080' }]}
+              onPress={handleClick}
+            >
+              <Text style={[styles.buttonText, { color: 'white' }]}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, { borderColor: '#F08080', backgroundColor: 'white' }]}
+              onPress={handleClose}
+            >
+              <Text style={[styles.buttonText, { color: '#F08080' }]}>No</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -32,23 +52,40 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    margin: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    padding: 20,
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
     elevation: 5,
+    width: '100%',
+    maxWidth: screenWidth - 64, 
+    paddingHorizontal: 32, 
   },
   modalText: {
-    marginBottom: 15,
+    marginBottom: 20,
+    fontSize: 20,
     textAlign: 'center',
+    fontFamily: 'OpenSans-SemiBold',
+  },
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    width: '100%',
+    gap: 10,
+    marginTop: 20,
+  },
+  button: {
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'transparent',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+  },
+  buttonText: {
+    fontSize: 21,
+    fontFamily: 'OpenSans-Bold',
+    fontWeight: '500',
   },
 });
 

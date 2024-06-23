@@ -60,7 +60,7 @@ const NotificationPage = () => {
   return (
     <View style={styles.container}>
       <Header
-        visible={false}
+        visible={true}
         text={'Notifications'}
         color={'white'}
         editalbe={false}

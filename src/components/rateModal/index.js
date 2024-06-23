@@ -1,7 +1,17 @@
 import React from 'react';
-import { Modal, View, Text, Button, StyleSheet } from 'react-native';
+import {Modal, View, Text, Button, StyleSheet, Image} from 'react-native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-const RateModal = ({ modalVisible, setModalVisible, handleClickClose, handleClick, title, description }) => {
+const ratingStar = require('../../../assets/icons/star.png');
+
+const RateModal = ({
+  modalVisible,
+  setModalVisible,
+  handleClickClose,
+  handleClick,
+  title,
+  description,
+}) => {
   return (
     <Modal
       transparent={true}
@@ -13,12 +23,31 @@ const RateModal = ({ modalVisible, setModalVisible, handleClickClose, handleClic
         <View style={styles.modalView}>
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
-          <Button title="1" onPress={() => handleClick(1)} />
-          <Button title="2" onPress={() => handleClick(2)} />
-          <Button title="3" onPress={() => handleClick(3)} />
-          <Button title="4" onPress={() => handleClick(4)} />
-          <Button title="5" onPress={() => handleClick(5)} />
-          <Button title="Close" onPress={handleClickClose} />
+          <View style={styles.starContainer}>
+            <TouchableOpacity>
+              <Image source={ratingStar} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image source={ratingStar} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image source={ratingStar} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image source={ratingStar} />
+            </TouchableOpacity>
+            <TouchableOpacity>
+              <Image source={ratingStar} />
+            </TouchableOpacity>
+          </View>
+          <Text style={styles.content}>
+            Explain your choice
+          </Text>
+          <TouchableOpacity style={{width: '100%'}} onPressIn={()=> {
+            console.log('AAA')
+          }}>
+            <Text style={styles.sendButton}>Send</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -27,13 +56,19 @@ const RateModal = ({ modalVisible, setModalVisible, handleClickClose, handleClic
 
 const styles = StyleSheet.create({
   centeredView: {
+    width: '100%',
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
+  starContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
   modalView: {
     margin: 20,
+    width: '90%',
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
@@ -49,13 +84,41 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontFamily: 'OpenSans-SemiBold',
     marginBottom: 15,
+    color: `#1E1D20`,
   },
   description: {
     marginBottom: 20,
     textAlign: 'center',
+    fontSize: 16,
+    fontFamily: 'OpenSans-Regular',
+    color: `#1E1D20B2`,
   },
+  sendButton: {
+    backgroundColor: '#F08080',
+    width: '100%',
+    height: 45,
+    textAlign: 'center',
+    justifyContent: 'center',
+    fontSize: 21,
+    fontFamily: 'OpenSans-SemiBold',
+    color: 'white',
+    paddingVertical: 8,
+    paddingHorizontal: 24,
+    borderRadius: 100,
+    marginTop: 16,
+  },
+  content: {
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: '#0000001A',
+    width: '100%',
+    height: 100,
+    padding: 12,
+    fontSize: 14,
+    fontFamily: 'OpenSans-Regular'
+  }
 });
 
 export default RateModal;

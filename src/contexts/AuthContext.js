@@ -252,6 +252,7 @@ const AuthProvider = ({children}) => {
         });
       }
     } catch (error) {
+      console.log(error)
       throw (error && error.response && error.response.data) || error;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

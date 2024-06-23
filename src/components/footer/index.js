@@ -12,7 +12,7 @@ const Footer = ({ state, style }) => {
   return (
     <View style={{ ...styles.container, ...style }}>
       <TouchableOpacity
-        style={[styles.tab, state === 1 && styles.activeTab]}
+        style={[styles.tab]}
         onPress={() => {
           if(state ===0)
           handleNavigation('MainPage')
@@ -22,7 +22,7 @@ const Footer = ({ state, style }) => {
         }}
       >
         <Image
-          source={require('../../../assets/icons/footer/learn.png')}
+          source={state === 0 ? require('../../../assets/icons/footer/learn_click.png') : require('../../../assets/icons/footer/learn.png')}
           style={styles.icon}
         />
       </TouchableOpacity>
@@ -31,16 +31,21 @@ const Footer = ({ state, style }) => {
         onPress={() => handleNavigation('ChatSection')}
       >
         <Image
-          source={require('../../../assets/icons/footer/chat.png')} 
+          source={state === 1 ? require('../../../assets/icons/footer/chat_click.png') : require('../../../assets/icons/footer/chat.png')} 
           style={styles.icon}
         />
       </TouchableOpacity>
       <TouchableOpacity
-        style={[styles.tab, state === 5 && styles.activeTab]}
-        onPress={() => handleNavigation('ProfileSection')}
+        style={[styles.tab]}
+        onPress={() => {
+          if(state ===4)
+          handleNavigation('MainPage')
+        else{
+          handleNavigation('ProfileSection')
+        }}}
       >
         <Image
-          source={require('../../../assets/icons/footer/profile.png')}
+          source={state === 4 ? require("../../../assets/icons/footer/profile_click.png") : require('../../../assets/icons/footer/profile.png')}
           style={styles.icon}
         />
       </TouchableOpacity>

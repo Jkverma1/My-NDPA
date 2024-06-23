@@ -64,7 +64,7 @@ const ChatScreen = () => {
           </View>
         ))}
       </ScrollView>
-      <Footer/>
+      <Footer state={1}/>
     </View>
     </SafeAreaView>
   );

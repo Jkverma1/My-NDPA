@@ -60,7 +60,7 @@ const StartIndependenceSection = () => {
             left: (screenWidth * 2) / 3 - 80,
           },
         ]}
-        onPress={() => navigation.navigate('IndependenceSection')}>
+        onPress={() => navigation.navigate('EnterGym')}>
         <Image source={pos_ico} />
       </TouchableOpacity>
 

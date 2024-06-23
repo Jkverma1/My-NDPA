@@ -11,6 +11,7 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 
@@ -52,6 +53,7 @@ const Insecure = require('../../../../assets/icons/learn/qualities/insecure.png'
 const Rude = require('../../../../assets/icons/learn/qualities/rude.png');
 const Jealous = require('../../../../assets/icons/learn/qualities/jealous.png');
 const Selfish = require('../../../../assets/icons/learn/qualities/selfish.png');
+
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -115,7 +117,13 @@ const QualitiesSecton = ({route}) => {
 
   const handleClickGreat = () => {
     setShowGreat(false);
-    setShowReward(true);
+    const data = {
+      param: param,
+      friendLike: selectedLabels,
+      friendDislike: selectedDisLike,
+      look: selectedLook,
+    };
+    navigation.navigate('FriendshipProcessSection', {param: data, move: true, part: 2});
   };
 
   const handleClick = async () => {
@@ -163,16 +171,6 @@ const QualitiesSecton = ({route}) => {
   const handleShowButton = () => {
     setShowSendButton(false);
     setShowContinueButton(true);
-  };
-
-  const handleClickMove = async () => {
-    const data = {
-      param: param,
-      friendLike: selectedLabels,
-      friendDislike: selectedDisLike,
-      look: selectedLook,
-    };
-    navigation.navigate('ReviewFriendSection', {param: data});
   };
 
   const handleClickSound = async txt => {
@@ -272,6 +270,7 @@ const QualitiesSecton = ({route}) => {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <CustomDialog
         modalVisible={modalVisible}
@@ -280,16 +279,6 @@ const QualitiesSecton = ({route}) => {
         icon={qualities_ico}
         title="Step 2. Qualities"
         description="Let's try to describe your friend's qualities."
-      />
-
-      <RewardDialog
-        modalVisible={showReward}
-        setModalVisible={setModalVisible}
-        handleClick={handleClickMove}
-        title="Great job!"
-        text="You've finished typing level!NN  Claim your reward."
-        buttonText="Go to Step 3"
-        icon={reward_ico}
       />
 
       <Header
@@ -521,10 +510,27 @@ const QualitiesSecton = ({route}) => {
       )}
 
       {showContinueButton && (
+        showGreat ?
+        <View style={styles.clickButtonContainer}>
+          <View style={styles.greatBox}>
+            <Image source={thumb_icon}/>
+            <Text
+                style={styles.greatText}
+              >
+                Great Job!
+              </Text>
+          </View>
+          <TouchableOpacity
+            style={[styles.clickButton, styles.greatButton]}
+            onPress={() => handleClickGreat()}>
+            <Text style={styles.b1_text}>Continue</Text>
+          </TouchableOpacity>
+        </View>
+        :
         <TouchableOpacity
-          style={styles.clickButton}
-          onPress={() => handleClickContinue()}>
-          <Text style={styles.b1_text}>Continue</Text>
+        style={styles.clickButton}
+        onPress={() => handleClickContinue()}>
+        <Text style={styles.b1_text}>Continue</Text>
         </TouchableOpacity>
       )}
 
@@ -535,21 +541,18 @@ const QualitiesSecton = ({route}) => {
           <Text style={styles.b1_text}>Send</Text>
         </TouchableOpacity>
       )}
-
-      <CustomGreatModal
-        visible={showGreat}
-        icon={thumb_icon}
-        buttonType={true}
-        handleClick={() => handleClickGreat()}
-        message="Great job!"
-      />
     </View>
+    </SafeAreaView>
   );
 };
 
 export default QualitiesSecton;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFBF8',
+  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -620,6 +623,21 @@ const styles = StyleSheet.create({
     top: 70,
     left: 0,
   },
+  clickButtonContainer: {
+    flexDirection: "column",
+    position: 'absolute',
+    bottom: 40,
+  },
+  greatBox:{
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+    marginBottom: 20
+  },
+  greatText:{
+    fontSize: 20,
+    fontFamily: 'OpenSans-Bold',
+  },
   clickButton: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -629,6 +647,11 @@ const styles = StyleSheet.create({
     bottom: 40,
     borderRadius: 45,
     backgroundColor: '#F08080',
+  },
+  greatButton: {
+    position: "static",
+    bottom: 0,
+    backgroundColor: '#23B80C',
   },
   clickStyle: {
     flex: 1,

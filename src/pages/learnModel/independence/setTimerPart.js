@@ -43,10 +43,6 @@ const SetTimerSection = () => {
     return unsubscribe;
   }, [navigation]);
 
-  const handleContinue = () => {
-    setMove(true);
-  };
-
   const handleClick = async () => {
     try {
       setModalVisible(false);
@@ -58,30 +54,11 @@ const SetTimerSection = () => {
   const handleClickMove = async () => {
     const timestamp = date.getTime();
     console.log('-------------data--------------', timestamp);
-    navigation.navigate('TimerWorkSection', {param: timestamp});
+    navigation.navigate('ExitTimer', {param: timestamp});
   };
 
   return (
     <View style={styles.container}>
-      <CustomDialog
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-        handleClick={handleClick}
-        icon={task_ico}
-        title="Step 2. Set timer"
-        description="Let’s set a timer for the task"
-      />
-
-      <RewardDialog
-        modalVisible={move}
-        setModalVisible={setModalVisible}
-        handleClick={handleClickMove}
-        title="Great job!"
-        text="You've finished typing level!NN  Claim your reward."
-        buttonText="Go to Step 2"
-        icon={reward_ico}
-      />
-
       <Header
         visible={false}
         text={'Set Timer'}
@@ -116,7 +93,7 @@ const SetTimerSection = () => {
             borderRadius: 45,
             backgroundColor: '#F08080',
           }}
-          onPress={() => handleContinue()}>
+          onPress={handleClickMove}>
           <Text style={styles.b3_text}>Save</Text>
         </TouchableOpacity>
       </View>

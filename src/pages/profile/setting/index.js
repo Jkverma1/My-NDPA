@@ -12,7 +12,7 @@ import PersonalInfoPage from './personalInfo';
 import ChangePwdPage from './changePwd';
 import TimeSupportPage from './timeSupport';
 import TimeSettingPage from './timeSet';
-// import IdVerificationPage from './idVerification';
+import IdVerificationPage from './idVerification';
 import IdVerificationList from './idVeriList';
 import SENPassportPage from './senPass';
 import NotificationPage from './notification';
@@ -56,11 +56,11 @@ const Main = () => {
         component={TimeSettingPage}
         options={{headerShown: false}}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name="IdVerificationPage"
         component={IdVerificationPage}
         options={{headerShown: false}}
-      /> */}
+      />
       <Stack.Screen
         name="IdVerificationList"
         component={IdVerificationList}

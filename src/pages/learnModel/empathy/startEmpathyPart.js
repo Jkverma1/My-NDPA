@@ -8,104 +8,47 @@ import {
   View,
   StyleSheet,
   Text,
-  Dimensions,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
 
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import Footer from '../../../components/footer';
-const arrow = require('../../../../assets/icons/left_ico.png');
+import RoadMap from './roadmap';
 
-const intro_ico = require('../../../../assets/icons/learn/empathy.png');
-const check_pos_ico = require('../../../../assets/icons/learn/check_pos_ico.png');
-const be_pos_ico = require('../../../../assets/icons/learn/be_pos_ico.png');
-const pos_ico = require('../../../../assets/icons/learn/pos_ico.png');
-const road_ico = require('../../../../assets/icons/learn/choice/road.png');
-
-const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
+const intro_ico = require('../../../../assets/icons/h_icon.png');
+const chatbot_ico = require('../../../../assets/icons/chatbot_ico.png');
 
 const StartEmpathySection = () => {
   const navigation = useNavigation();
-  const handleBackPress = () => {
-    console.log('clicked');
-    navigation.goBack();
-  };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={handleBackPress}
-        style={{
-          position: 'absolute',
-          left: screenWidth / 20,
-          top: 10,
-          flexDirection: 'row',
-          alignItems: 'center',
-          zIndex: 2,
-        }}>
-        <Image source={arrow} />
-        <Text style={styles.text}>Back</Text>
-      </TouchableOpacity>
-      <View style={styles.textBackground}>
-        <Image source={intro_ico} />
-        <Text style={[styles.title, {marginLeft: 30}]}>Empathy</Text>
+    <ScrollView
+      contentContainerStyle={styles.scrollViewContent}
+      scrollEventThrottle={16} 
+    >
+      <View style={styles.innerContainer}>
+        <View style={styles.topBox}>
+          <Image source={intro_ico} />
+          <Text style={styles.title}>Let’s improve your{'\n'}communication skills!</Text>
+        </View>
+        <View style={styles.secondBox}>
+          <Image source={chatbot_ico} style={styles.icon} />
+          <View style={styles.textContainer}>
+            <Text style={styles.secondBoxText}>Use our Chatbot!</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate('ChatbotSection')}>
+              <Text style={styles.buttonText}>Go!</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        <RoadMap screen={"profile"} />
       </View>
-      <Image style={styles.road} source={road_ico} />
-      <TouchableOpacity
-        style={[
-          styles.checkPos,
-          {
-            top: (screenHeight * 1) / 3 - 85,
-            left: (screenWidth * 2) / 3 - 80,
-          },
-        ]}
-        onPress={() => navigation.navigate('EmpathySection')}>
-        <Image source={pos_ico} />
-      </TouchableOpacity>
-
-      <Image
-        style={[
-          styles.checkPos,
-          {
-            top: (screenHeight * 3) / 5 - 155,
-            left: (screenWidth * 2) / 5 - 40,
-          },
-        ]}
-        source={be_pos_ico}
-      />
-      <Image
-        style={[
-          styles.checkPos,
-          {
-            top: (screenHeight * 2) / 3 - 150,
-            left: (screenWidth * 5) / 7 + 10,
-          },
-        ]}
-        source={be_pos_ico}
-      />
-      <Image
-        style={[
-          styles.checkPos,
-          {
-            top: (screenHeight * 5) / 8 + 50,
-            left: (screenWidth * 2) / 5 - 3,
-          },
-        ]}
-        source={be_pos_ico}
-      />
-      <Image
-        style={[
-          styles.checkPos,
-          {
-            top: (screenHeight * 4) / 5 - 40,
-            left: (screenWidth * 5) / 7 - 10,
-          },
-        ]}
-        source={be_pos_ico}
-      />
-      <Footer state={0} />
-    </View>
+    </ScrollView>
+    <Footer state={0} />
+  </View>
   );
 };
 
@@ -115,60 +58,74 @@ const styles = StyleSheet.create({
   container: {
     position: 'relative',
     flex: 1,
-    alignItems: 'center',
-    height: screenHeight,
     backgroundColor: '#FFFBF8',
   },
-  title: {
-    textAlign: 'center',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    color: 'black',
-    fontSize: 20,
-    fontFamily: 'OpenSans-Bold',
+  scrollViewContent: {
+    flexGrow: 1,
+    paddingBottom: 20, 
   },
-  row: {
+  innerContainer: {
+    flex: 1,
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 71,
+  },
+  topBox: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: (screenWidth * 9) / 10,
-    alignSelf: 'center',
-  },
-  road: {
-    position: 'absolute',
-    bottom: 48,
-    height: (screenHeight * 2) / 3,
-    width: (screenWidth * 2) / 3,
-  },
-  checkPos: {
-    position: 'absolute',
-    // height: 50,
-    // width: 50,
-  },
-  text: {
-    fontFamily: 'OpenSans-Regular',
-    // marginTop: 0.7,
-    fontWeight: '600',
-    textDecorationLine: 'underline',
-    fontSize: 16,
-    color: '#F08080',
-  },
-  icon: {
-    justifyContent: 'center',
-    width: 72,
-    height: 72,
-  },
-  textBackground: {
-    flexDirection: 'row',
-    backgroundColor: 'white',
     alignItems: 'center',
-    // justifyContent: 'space-between',
-    padding: 30,
-    marginTop: 40,
-    borderRadius: 20,
+    backgroundColor: '#FFDAB980',
+    borderRadius: 10,
+    paddingTop: 10,
+    width: '100%',
+  },
+  title: {
+    color: 'black',
+    fontSize: 18,
+    fontFamily: 'OpenSans-Bold',
+    fontWeight: '700',
+    lineHeight: 24.51,
+    textAlign: 'left',
+    marginLeft: 16,
+  },
+  secondBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8AD9D',
+    columnGap: 48,
+    borderRadius: 10,
+    marginTop: 24,
+    padding: 16,
+    width: '100%',
+    zIndex: 1
+  },
+  textContainer: {
+    marginLeft: 16,
+    flex: 1,
+  },
+  secondBoxText: {
+    color: 'black',
+    fontSize: 18,
+    fontFamily: 'OpenSans-Bold',
+    fontWeight: '700',
+    lineHeight: 24.51,
+  },
+  button: {
+    marginTop: 8,
+    maxWidth: 152,
+    backgroundColor: '#FFF',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 80,
     borderWidth: 1,
-    borderColor: '#FBC4AB',
-    width: (screenWidth * 9) / 10,
-    height: 100,
+    borderColor: '#F08080',
+    height: 38,
+  },
+  buttonText: {
+    color: '#F08080',
+    fontSize: 16,
+    fontFamily: 'Open Sans',
+    fontWeight: '600',
+    lineHeight: 21.79,
+    textAlign: 'center',
   },
 });

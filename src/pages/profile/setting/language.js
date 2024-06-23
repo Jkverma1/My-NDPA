@@ -1,171 +1,198 @@
-import 'react-native-gesture-handler';
-
-// Import React and Component
-import React, {useState} from 'react';
-
-import {
-  Image,
-  View,
-  StyleSheet,
-  Text,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-  TextInput,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-
-import Header from '../../../components/header';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Image, Dimensions, Modal, TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import Header from '../../../components/header'; // Replace with your actual header component
 
 const language_ico = require('../../../../assets/icons/profile/setting/language_ico.png');
 const region_ico = require('../../../../assets/icons/profile/setting/region_ico.png');
 
 const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
 
-const generalData = [
+const languageData = [
   {
     ico: language_ico,
     text: 'Language',
-    sample: 'English',
-    value: 'Select language of the app interface',
-  },
-  {
-    ico: region_ico,
-    text: 'Region',
-    sample: 'Select',
-    value: 'Select your region',
-  },
+    value: 'English',
+    options: ['English', 'Spanish', 'French', 'German'],
+  }
 ];
 
-const LanguagePage = () => {
-  const navigation = useNavigation();
-  const [name, setName] = useState('');
-  const [editMode, setEditMode] = useState(false);
+const regionData = [{
+  ico: region_ico,
+  text: 'Region',
+  value: 'Select',
+  options: ['Select', 'USA', 'Canada', 'UK', 'Australia'],
+}]
 
-  console.log('---------------', editMode);
+const LanguagePage = () => {
+  const [selectedLanguage, setSelectedLanguage] = useState('English');
+  const [selectedRegion, setSelectedRegion] = useState('Select');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [dropdownOptions, setDropdownOptions] = useState([]);
+  const [currentSelectionType, setCurrentSelectionType] = useState('');
+
+  const handleOpenModal = (options, type) => {
+    setDropdownOptions(options);
+    setCurrentSelectionType(type);
+    setModalVisible(true);
+  };
+
+  const handleSelectOption = (option) => {
+    if (currentSelectionType === 'Language') {
+      setSelectedLanguage(option);
+    } else if (currentSelectionType === 'Region') {
+      setSelectedRegion(option);
+    }
+    setModalVisible(false);
+  };
 
   return (
     <View style={styles.container}>
       <Header
-        visible={false}
+        visible={true}
         text={'Language and Country'}
         color={'white'}
-        editalbe={false}
-        setEdit={setEditMode}
+        editable={false} 
       />
-      <ScrollView>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={styles.container_s}>
-          {generalData.map((row, rowIndex) => (
-            <View key={rowIndex}>
-              <View style={styles.boxBackground}>
-                <View style={{flexDirection: 'col', gap: 10}}>
-                  <View style={{flexDirection: 'row', gap: 10}}>
-                    <Image source={row.ico} style={{width: 20, height: 20}} />
-                    <Text style={styles.title}>{row.text}</Text>
-                  </View>
-                  <Text style={styles.text}>{row.value}</Text>
-                  <TextInput
-                    style={[styles.input]}
-                    placeholder={row.sample}
-                    placeholderTextColor="#F08080"
-                    value={name}
-                    onChangeText={text => {
-                      setName(text);
-                    }}
-                    autoCapitalize="none"
-                  />
-                </View>
-              </View>
+          <View style={styles.container_t}>
+            <Image source={language_ico} style={styles.icon} />
+            <Text style={styles.titleText}>Language</Text>
+          </View>
+          <Text style={styles.content}>Select language of the app interface</Text>
+          {languageData.map((row, index) => (
+            <View key={index} style={styles.boxBackground}>
+              <TouchableOpacity style={styles.rowContainer} onPress={() => handleOpenModal(row.options, row.text)}>
+                <Text style={styles.selectedValue}>
+                  {selectedLanguage}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+          <View style={styles.container_t}>
+            <Image source={region_ico} style={styles.icon} />
+            <Text style={styles.titleText}>Region</Text>
+          </View>
+          <Text style={styles.content}>Select your region</Text>
+          {regionData.map((row, index) => (
+            <View key={index} style={styles.boxBackground}>
+              <TouchableOpacity style={styles.rowContainer} onPress={() => handleOpenModal(row.options, row.text)}>
+                <Text style={styles.selectedValue}>
+                  {selectedRegion}
+                </Text>
+              </TouchableOpacity>
             </View>
           ))}
         </View>
       </ScrollView>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+          <View style={styles.modalOverlay} />
+        </TouchableWithoutFeedback>
+        <View style={styles.modalContent}>
+          <ScrollView>
+            {dropdownOptions.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.option}
+                onPress={() => handleSelectOption(option)}
+              >
+                <Text>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      </Modal>
     </View>
   );
 };
 
-export default LanguagePage;
-
 const styles = StyleSheet.create({
-  container_s: {
-    marginTop: 25,
-    gap: 20,
-    marginBottom: 100,
-  },
-  centerContainer: {
-    marginTop: 35,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
   container: {
     flex: 1,
-    alignItems: 'center',
     backgroundColor: 'white',
+    alignItems: 'center',
   },
-  input: {
+  container_t: {
+    marginTop: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  container_s: {
+    marginTop: 25,
+    marginBottom: 100,
+  },
+  scrollViewContent: {
+    width: screenWidth,
+    flexGrow: 1,
+    alignItems: 'flex-start',
+    paddingHorizontal: 16,
+  },
+  boxBackground: {
+    width: '100%',
+    backgroundColor: '#FFF',
     borderWidth: 1,
     borderColor: '#F08080',
+    borderRadius: 45,
+    marginBottom: 20,
     padding: 10,
-    paddingLeft: 30,
-    borderRadius: 40,
-    height: 46,
   },
-  row: {
+  rowContainer: {
+    width: screenWidth - 52,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    width: (screenWidth * 9) / 10,
-    alignSelf: 'center',
+  },
+  icon: {
+    width: 20,
+    height: 20,
+    marginRight: 10,
   },
   title: {
-    color: 'black',
     fontSize: 18,
-    fontFamily: 'OpenSans-Medium',
-    fontWeight: '600',
-    alignItems: 'center',
-    // textAlign: 'left',
+    fontWeight: 'bold',
+    flex: 1,
   },
-  text: {
-    color: 'black',
+  titleText: {
+    fontSize: 18,
+    fontFamily: "OpenSans-semibold",
+  },
+  selectedValue: {
+    color: '#333',
     fontSize: 16,
-    fontFamily: 'OpenSans-Medium',
-    fontWeight: '600',
-    // textAlign: 'left',
   },
-
-  icon: {
-    justifyContent: 'center',
-    width: 32,
-    height: 32,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-
-  boxBackground: {
-    width: (screenWidth * 9) / 10,
-    // height: 50,
+  content: {
     marginTop: 10,
-    textAlign: 'left',
+    marginBottom: 16,
+    fontSize: 18,
+    fontFamily: "OpenSans-regular",
   },
-
-  underline: {
-    marginTop: 5,
-    height: 1,
-    backgroundColor: '#1E1D2033',
+  modalContent: {
+    backgroundColor: 'white',
+    position: 'absolute',
+    bottom: 0,
     width: '100%',
-    // marginTop: 1,
+    maxHeight: '50%',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    paddingVertical: 10,
   },
-  startButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 57,
-    marginTop: 20,
-    borderRadius: 45,
-    backgroundColor: '#F08080',
-  },
-  b3_text: {
-    color: 'white',
-    fontSize: 21,
-    fontFamily: 'OpenSans-Medium',
+  option: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
 });
+
+export default LanguagePage;

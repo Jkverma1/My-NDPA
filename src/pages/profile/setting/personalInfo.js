@@ -17,7 +17,8 @@ import {
   TextInput,
   Modal,
   ActivityIndicator,
-  Alert
+  Alert,
+  SafeAreaView
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import CountryPicker from 'react-native-country-picker-modal';
@@ -74,9 +75,9 @@ const PersonalInfoPage = () => {
         house: house,
         zip: zip,
       };
-      dispatch(updateUserInfo(userData, user.id));
+      dispatch(updateUserInfo(userData, user?.id));
     } else {
-      dispatch(getUserInfo(user.id));
+      dispatch(getUserInfo(user?.id));
     }
   }, [isLoading]);
 
@@ -250,7 +251,7 @@ const PersonalInfoPage = () => {
   ];
 
   return (
-    <View style={styles.container}>
+  <SafeAreaView style={styles.safeArea}>
       <Header
         visible={true}
         text={'Personal Information'}
@@ -258,6 +259,7 @@ const PersonalInfoPage = () => {
         editMode
         setEdit={setEditMode}
       />
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.centerContainer}>
           {editMode ? (
@@ -330,10 +332,15 @@ const PersonalInfoPage = () => {
         </View>
       )}
     </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
   container: {
     flex: 1,
     paddingBottom: 30,
@@ -426,12 +433,12 @@ const styles = StyleSheet.create({
   },
   calendarIcon: {
     position: 'absolute',
-    top: 48,
+    top: 43,
     right: 10,
   },
   narrowIconContainer: {
     position: 'absolute',
-    top: 48,
+    top: 43,
     right: 10,
   },
 });

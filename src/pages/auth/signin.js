@@ -65,6 +65,7 @@ const Signin = () => {
   useEffect(() => {
     console.log(!isAuthenticated);
     if (isAuthenticated) {
+      console.log('user signin: ', JSON.stringify(user))
       dispatch(retrieveChatBotTopics());
       console.log(`user?.parentEmail: ${user?.parentEmail}`)
         let destination = 'Main';

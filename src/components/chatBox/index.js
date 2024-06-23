@@ -22,7 +22,7 @@ const ChatBox = ({ text, handleChangeText, handleSend, messageIcon, mico }) => {
 
 const styles = StyleSheet.create({
   inputContainer: {
-    width: "auto",
+    width: 'auto',
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,

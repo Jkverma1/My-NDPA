@@ -72,10 +72,6 @@ const IndependenceSection = () => {
     return unsubscribe;
   }, [navigation]);
 
-  const handleContinue = () => {
-    setMove(true);
-  };
-
   const handleClick = async () => {
     try {
       setModalVisible(false);
@@ -86,9 +82,8 @@ const IndependenceSection = () => {
 
   const handleClickMove = async () => {
     try {
-      console.log('-------------data--------------');
       dispatch(setStateFunc(null));
-      navigation.navigate('SetTimeSection');
+      navigation.navigate('ExitGym');
     } catch (error) {
       setErrorMsg((error && error.error) || 'Something went wrong.');
     }
@@ -182,7 +177,7 @@ const IndependenceSection = () => {
       <RewardDialog
         modalVisible={move}
         setModalVisible={setModalVisible}
-        handleClick={handleClickMove}
+        handleClick={handleClick}
         title="Great job!"
         text="You've finished typing level!NN  Claim your reward."
         buttonText="Go to Step 2"
@@ -190,10 +185,11 @@ const IndependenceSection = () => {
       />
 
       <Header
-        visible={false}
+        visible={true}
         text={'Independence'}
         color={'#FFFBF8'}
         editalbe={false}
+        goBack={true}
       />
 
       <Image source={avatar_ico} style={styles.avatar} />
@@ -204,20 +200,26 @@ const IndependenceSection = () => {
         <Text style={styles.text}>{comment}</Text>
       </View>
 
-      <ChatBox
-        text={comment}
-        handleChangeText={setComment}
-        handleSend={handleContinue}
-        messageIcon={messageIcon}
-        bottom={0}
-        mico={true}
-      />
-      <TouchableOpacity
-        style={{position: 'absolute', bottom: 60, right: 15}}
-        disabled={isLoading}
-        onPress={() => onStartRecord()}>
-        <Image source={mico_ico} />
-      </TouchableOpacity>
+      <View style={styles.inputContainer}>
+        <View style={{width: '90%' }}>
+        <ChatBox
+          text={comment}
+          handleChangeText={setComment}
+          handleSend={handleClickMove}
+          messageIcon={messageIcon}
+          bottom={0}
+          mico={false}
+        />
+        </View>
+        
+        <TouchableOpacity
+          //style={{position: 'absolute', bottom: 60, right: 15}}
+          disabled={isLoading}
+          onPress={() => onStartRecord()}
+        >
+          <Image source={mico_ico} />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -275,4 +277,15 @@ const styles = StyleSheet.create({
     borderColor: '#F08080',
     backgroundColor: 'white',
   },
+
+  inputContainer: {
+    width: '90%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: 8,
+    position: 'absolute',
+    bottom: 60,
+    right: 15,
+  }
 });

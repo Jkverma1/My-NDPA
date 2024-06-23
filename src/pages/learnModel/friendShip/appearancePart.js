@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   PermissionsAndroid,
   Platform,
+  SafeAreaView
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -36,7 +37,7 @@ import Header from '../../../components/header';
 import CustomDialog from '../../../components/dialogModal';
 import RewardDialog from '../../../components/rewardModal';
 import ChatBox from '../../../components/chatBox';
-import {ScrollView} from 'react-native-gesture-handler';
+import {ScrollView, TextInput} from 'react-native-gesture-handler';
 
 const appea_ico = require('../../../../assets/icons/appea_ico.png');
 const addcolor_ico = require('../../../../assets/icons/learn/appearance/addcolor_ico.png');
@@ -143,7 +144,14 @@ const AppearanceSecton = () => {
       setShowButton(false);
       setProgress(0.125 * (currentStep + 1));
     } else {
-      setShowReward(true);
+      const data = {
+        name: text,
+        hair: hair,
+        eye: eye,
+      };
+      setCurrentStep(1);
+      dispatch(setStateFunc(null));
+      navigation.navigate('FriendshipProcessSection', {param: data, move: true, part: 1});
     }
   };
 
@@ -169,22 +177,6 @@ const AppearanceSecton = () => {
       setEye(select);
     }
     setShowButton(true);
-  };
-
-  const handleClickMove = async () => {
-    try {
-      const data = {
-        name: text,
-        hair: hair,
-        eye: eye,
-      };
-      setCurrentStep(1);
-      dispatch(setStateFunc(null));
-      navigation.navigate('QualitiesSection', {param: data});
-      // navigation.navigate('MainPage', {param: true});
-    } catch (error) {
-      setErrorMsg((error && error.error) || 'Something went wrong.');
-    }
   };
 
   const handleClickSound = async txt => {
@@ -392,6 +384,7 @@ const AppearanceSecton = () => {
   };
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <CustomDialog
         modalVisible={modalVisible}
@@ -400,16 +393,6 @@ const AppearanceSecton = () => {
         icon={appea_ico}
         title="Step 1. Appearance"
         description="Let's try to describe your friend's appearance."
-      />
-
-      <RewardDialog
-        modalVisible={showReward}
-        setModalVisible={setModalVisible}
-        handleClick={handleClickMove}
-        title="Great job!"
-        text="You've finished typing level!NN  Claim your reward."
-        buttonText="Go to Step 2"
-        icon={reward_ico}
       />
 
       <Header
@@ -453,34 +436,54 @@ const AppearanceSecton = () => {
             </>
           </View>
           {!showButton && (
-           <View style={{ 
-            position: 'absolute', 
-            width: "100%", 
+          <View style={{
+            position: 'absolute',
             bottom: 0,
-            flexDirection: 'row', 
-            justifyContent: 'space-between',
-            alignItems: 'center', 
-            backgroundColor: "#FFF", 
-            paddingHorizontal: 16, 
-            paddingVertical: 8, 
-            borderTopRightRadius: 25, 
-            borderTopLeftRadius: 25,
-            columnGap: 4 
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: '#FFF',
+            borderTopRightRadius: 24,
+            borderTopLeftRadius: 24,
+            paddingHorizontal: 16,
+            paddingVertical: 16,
+            paddingBottom: 50,
           }}>
-            <ChatBox
-              text={text}
-              handleChangeText={handleChangeText}
-              handleSend={() => handleSend(1)}
-              messageIcon={messageIcon}
-              mico={true}
-            />
-            <TouchableOpacity
-              onPress={() => handleSend(2)}
-              disabled={isLoading}>
+            <View style={{
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    borderColor: '#F08080',
+    borderWidth: 1,
+    borderRadius: 25,
+    marginRight: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 1
+  }}>
+              <TextInput
+                value={text}
+                onChangeText={handleChangeText}
+                style={{
+                  flex: 1,
+                  fontSize: 16,
+                  fontFamily: "Open Sans",
+                  fontWeight: 400,
+                  lineHeight: 21.79,
+                  paddingVertical: 10,
+                  paddingHorizontal: 10,
+                }}
+                placeholder="Type a message"
+              />
+              <TouchableOpacity onPress={()=> handleSend(1)}>
+                <Image source={messageIcon} />
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity style={{
+    justifyContent: 'center',
+    alignItems: 'center',
+  }} onPress={()=> handleSend(2)}>
               <Image source={mico_ico} />
             </TouchableOpacity>
           </View>
-          
           )}
         </>
       )}
@@ -610,12 +613,17 @@ const AppearanceSecton = () => {
         </TouchableOpacity>
       )}
     </View>
+    </SafeAreaView>
   );
 };
 
 export default AppearanceSecton;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FFFBF8',
+  },
   container: {
     flex: 1,
     alignItems: 'center',

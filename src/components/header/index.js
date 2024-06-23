@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import menuIcon from '../../../assets/icons/mdi_menu.png';
@@ -6,10 +6,21 @@ import closeIcon from '../../../assets/icons/m_close_ico.png';
 
 const Header = ({ visible, text, color, editable, chatSidebar = false ,editMode=false, setEdit, goBack=false}) => {
   const navigation = useNavigation();
+  const [buttonText, setButtonText] = useState("Edit")
 
   const handleMenuPress = () => {
     navigation.navigate('ChatSidebar');
   };
+
+  const handleEdit = ()=> {
+    if(buttonText === "Edit"){
+      setButtonText("Cancel")
+    }
+    else{
+      setButtonText("Edit")
+    }
+    setEdit((edit)=> { return !edit})
+  }
 
   const handleBack = () => {
     if(goBack){
@@ -35,15 +46,15 @@ const Header = ({ visible, text, color, editable, chatSidebar = false ,editMode=
         </TouchableOpacity>
       </View>
       <View style={styles.center}>
-        <Text style={[styles.text, { color: '#1E1D20' }]}>{text}</Text>
+        <Text numberOfLines={1} style={[styles.text, { color: '#1E1D20' }]}>{text}</Text>
       </View>
       <View style={styles.right}>
         {editMode && (
           <TouchableOpacity
             style={styles.editButton}
-            onPress={() => setEdit(true)}
+            onPress={handleEdit}
           >
-            <Text style={styles.editButtonText}>Edit</Text>
+            <Text style={styles.editButtonText}>{buttonText}</Text>
           </TouchableOpacity>
         )}
         {editable && (
@@ -75,15 +86,13 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     backgroundColor: 'transparent',
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
   },
   left: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   center: {
-    flex: 2,
+    flex: "auto",
     alignItems: 'center',
   },
   right: {
@@ -98,7 +107,6 @@ const styles = StyleSheet.create({
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 10,
   },
   buttonText: {
     fontSize: 16,
@@ -119,6 +127,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     lineHeight: 21.79,
     textAlign: 'center',
+    flexWrap: "nowrap",
     color: 'white',
   },
 });

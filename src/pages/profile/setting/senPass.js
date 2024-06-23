@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
+  SafeAreaView
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 
@@ -58,18 +59,97 @@ const hintIco = require('../../../../assets/icons/profile/setting/hint_ico.png')
 
 const SENPassportPage = () => {
   const navigation = useNavigation();
-  const [name, setName] = useState('');
+  const [status, setStatus] = useState('');
+  const [diagnosis, setDiagnosis] = useState('');
+  const [individualNeeds, setIndividualNeeds] = useState('');
+  const [supportNeeds, setSupportNeeds] = useState('');
+  const [likes, setLikes] = useState('');
+  const [dislikes, setDislikes] = useState('');
+  const [communicationMethod, setCommunicationMethod] = useState('');
+  const [teacherAwareOf, setTeacherAwareOf] = useState('');
+  const [studentFindsDifficult, setStudentFindsDifficult] = useState('');
+  const [studentDoesIndependently, setStudentDoesIndependently] = useState('');
+  const [notesAndComments, setNotesAndComments] = useState('');
   const [editMode, setEditMode] = useState(false);
+
+  function getFieldValue(field) {
+    switch (field) {
+      case 'Status':
+        return status;
+      case 'Diagnosis':
+        return diagnosis;
+      case 'Individual Needs':
+        return individualNeeds;
+      case 'Support Needs':
+        return supportNeeds;
+      case 'Likes':
+        return likes;
+      case 'Dislikes':
+        return dislikes;
+      case 'I communicate by...':
+        return communicationMethod;
+      case 'Teacher should be aware of':
+        return teacherAwareOf;
+      case 'Student finds difficult':
+        return studentFindsDifficult;
+      case 'Student does independently':
+        return studentDoesIndependently;
+      case 'Notes and comments':
+        return notesAndComments;
+      default:
+        return '';
+    }
+  }
+  function handleFieldChange(field, value) {
+    switch (field) {
+      case 'Status':
+        setStatus(value);
+        break;
+      case 'Diagnosis':
+        setDiagnosis(value);
+        break;
+      case 'Individual Needs':
+        setIndividualNeeds(value);
+        break;
+      case 'Support Needs':
+        setSupportNeeds(value);
+        break;
+      case 'Likes':
+        setLikes(value);
+        break;
+      case 'Dislikes':
+        setDislikes(value);
+        break;
+      case 'I communicate by...':
+        setCommunicationMethod(value);
+        break;
+      case 'Teacher should be aware of':
+        setTeacherAwareOf(value);
+        break;
+      case 'Student finds difficult':
+        setStudentFindsDifficult(value);
+        break;
+      case 'Student does independently':
+        setStudentDoesIndependently(value);
+        break;
+      case 'Notes and comments':
+        setNotesAndComments(value);
+        break;
+      default:
+        break;
+    }
+  }
 
   console.log('---------------', editMode);
 
   return (
+    <SafeAreaView style={styles.safeArea}>
     <View style={styles.container}>
       <Header
-        visible={false}
+        visible={true}
         text={'SEN Passport'}
         color={'white'}
-        editalbe={true}
+        editMode
         setEdit={setEditMode}
       />
       <ScrollView>
@@ -82,15 +162,13 @@ const SENPassportPage = () => {
                   <Text style={styles.title}>{row.text}</Text>
                   {editMode ? (
                     <TextInput
-                      style={[styles.input]}
-                      placeholder={row.value}
-                      placeholderTextColor="#F08080"
-                      value={name}
-                      onChangeText={text => {
-                        setName(text);
-                      }}
-                      autoCapitalize="none"
-                    />
+                    style={styles.input}
+                    placeholder={row.value}
+                    placeholderTextColor="#F08080"
+                    value={getFieldValue(row.text)}
+                    onChangeText={text => handleFieldChange(row.text, text)}
+                    autoCapitalize="none"
+                  />
                   ) : (
                     <Text style={styles.text}>{row.value}</Text>
                   )}
@@ -109,15 +187,13 @@ const SENPassportPage = () => {
                   <Text style={styles.title}>{row.text}</Text>
                   {editMode ? (
                     <TextInput
-                      style={[styles.input]}
-                      placeholder={row.value}
-                      placeholderTextColor="#F08080"
-                      value={name}
-                      onChangeText={text => {
-                        setName(text);
-                      }}
-                      autoCapitalize="none"
-                    />
+                    style={styles.input}
+                    placeholder={row.value}
+                    placeholderTextColor="#F08080"
+                    value={getFieldValue(row.text)}
+                    onChangeText={text => handleFieldChange(row.text, text)}
+                    autoCapitalize="none"
+                  />
                   ) : (
                     <Text style={styles.text}>{row.value}</Text>
                   )}
@@ -136,15 +212,13 @@ const SENPassportPage = () => {
                   <Text style={styles.title}>{row.text}</Text>
                   {editMode ? (
                     <TextInput
-                      style={[styles.input]}
-                      placeholder={row.value}
-                      placeholderTextColor="#F08080"
-                      value={name}
-                      onChangeText={text => {
-                        setName(text);
-                      }}
-                      autoCapitalize="none"
-                    />
+                    style={styles.input}
+                    placeholder={row.value}
+                    placeholderTextColor="#F08080"
+                    value={getFieldValue(row.text)}
+                    onChangeText={text => handleFieldChange(row.text, text)}
+                    autoCapitalize="none"
+                  />
                   ) : (
                     <Text style={styles.text}>{row.value}</Text>
                   )}
@@ -162,12 +236,17 @@ const SENPassportPage = () => {
         </View>
       </ScrollView>
     </View>
+    </SafeAreaView>
   );
 };
 
 export default SENPassportPage;
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
   container_s: {
     marginTop: 25,
     gap: 20,

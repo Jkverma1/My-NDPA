@@ -1,80 +1,30 @@
-import 'react-native-gesture-handler';
-
-// Import React and Component
-import React, {useState} from 'react';
-
-import {
-  View,
-  StyleSheet,
-  Text,
-  TextInput,
-  Dimensions,
-  TouchableOpacity,
-} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DatePicker from 'react-native-date-picker';
-import {Picker} from '@react-native-picker/picker';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, Dimensions, StyleSheet, ScrollView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import DateTimePicker from '@react-native-community/datetimepicker'; 
 
 import Header from '../../../components/header';
 
 const screenWidth = Dimensions.get('window').width;
-const screenHeight = Dimensions.get('window').height;
 
 const dayData = [
-  {
-    id: 1,
-    day: 'Mon',
-  },
-  {
-    id: 2,
-    day: 'Tue',
-  },
-  {
-    id: 3,
-    day: 'Wed',
-  },
-  {
-    id: 4,
-    day: 'Thu',
-  },
-  {
-    id: 5,
-    day: 'Fri',
-  },
-  {
-    id: 6,
-    day: 'Sat',
-  },
-  {
-    id: 0,
-    day: 'Sun',
-  },
+  { id: 1, day: 'Mon' },
+  { id: 2, day: 'Tue' },
+  { id: 3, day: 'Wed' },
+  { id: 4, day: 'Thu' },
+  { id: 5, day: 'Fri' },
+  { id: 6, day: 'Sat' },
+  { id: 0, day: 'Sun' },
 ];
 
 const TimeSetting = () => {
   const navigation = useNavigation();
-  const [showModal, setShowModal] = useState(false);
   const [selectedDays, setSelectedDays] = useState([]);
   const [name, setName] = useState('');
-  const [hours, setHours] = useState(6);
-  const [date, setDate] = useState(new Date());
-  const [show, setShow] = useState(false);
-  const [seconds, setSeconds] = useState(0);
+  const [time, setTime] = useState(new Date());
 
   const handleBackPress = () => {
-    console.log('clicked');
     navigation.goBack();
-  };
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(false);
-    setDate(currentDate);
-  };
-
-  const showTimepicker = () => {
-    setShow(true);
   };
 
   const handlePress = id => {
@@ -84,107 +34,96 @@ const TimeSetting = () => {
       setSelectedDays([...selectedDays, id]);
     }
   };
-  const decrement = (unit, setter, max) => {
-    setter(prev => (prev - 1 + max) % max);
+
+  const handleSave = () => {
+    console.log('Selected Days:', selectedDays);
+    console.log('Time:', time);
+    console.log('Name:', name);
+    navigation.goBack();
+  };
+
+  const onChangeTime = (event, selectedTime) => {
+    const currentTime = selectedTime || time;
+    setTime(currentTime);
   };
 
   return (
-    <View style={styles.container}>
-      <Header
-        visible={false}
-        text={'Time Support'}
-        color={'white'}
-        editalbe={false}
-      />
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <Header visible={false} text={'Time Support'} color={'white'} editable={false} />
       <View style={styles.container_s}>
         <Text style={styles.title}>Set your time</Text>
         <Text style={styles.text}>
-          Select how often would you like to receive a reminder
+          Select how often you would like to receive a reminder
         </Text>
-        {/* <TimerPicker /> */}
-        <DatePicker
-          date={date}
-          onDateChange={setDate}
-          //   mode="time"
-          locale="en-GB" // Ensures 24-hour format if desired
-          is24hourSource="locale" // Use this to enforce 24-hour time based on locale
-          minuteInterval={1} // You can specify minute intervals
-          androidVariant="iosClone" // Use this for iOS-like appearance on Android
-          timeZoneOffsetInMinutes={0} // Adjust time zone if necessary
+        <DateTimePicker
+          value={time}
+          mode="time"
+          is24Hour={true}
+          display="spinner"
+          onChange={onChangeTime}
+          style={{ alignSelf: 'center' }}
         />
-
         <Text style={styles.title}>Select Days</Text>
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <View style={styles.dayButtonContainer}>
           {dayData.map(day => (
             <TouchableOpacity
               key={day.id}
               style={[
                 styles.dayButton,
                 {
-                  borderColor: selectedDays.includes(day.id)
-                    ? '#F08080'
-                    : '#1E1D20',
-                  backgroundColor: selectedDays.includes(day.id)
-                    ? '#F08080'
-                    : 'white',
+                  borderColor: selectedDays.includes(day.id) ? '#F08080' : '#1E1D20',
+                  backgroundColor: selectedDays.includes(day.id) ? '#F08080' : 'white',
                 },
               ]}
               onPress={() => handlePress(day.id)}>
               <Text
                 style={[
-                  styles.dText,
-                  {
-                    color: selectedDays.includes(day.id)
-                      ? '#FFFFFF'
-                      : '#1E1D2080',
-                  },
+                  styles.dayButtonText,
+                  { color: selectedDays.includes(day.id) ? '#FFFFFF' : '#1E1D2080' },
                 ]}>
                 {day.day}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
+
         <Text style={styles.title}>Name Reminder</Text>
         <TextInput
-          style={[styles.input]}
+          style={styles.input}
           placeholder="Enter Name"
           placeholderTextColor="#969596"
           value={name}
-          onChangeText={text => {
-            setName(text);
-          }}
+          onChangeText={text => setName(text)}
           autoCapitalize="none"
         />
 
-        <View style={{gap: 20}}>
-          <TouchableOpacity style={styles.startButton}>
-            <Text style={styles.b3_text}>Save</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+            <Text style={styles.buttonText}>Save</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.cancelButton}
-            onPress={handleBackPress}>
-            <Text style={styles.b2_text}>Cancel</Text>
+          <TouchableOpacity style={styles.cancelButton} onPress={handleBackPress}>
+            <Text style={[styles.buttonText, { color: '#F08080' }]}>Cancel</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
 export default TimeSetting;
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
+    paddingBottom: 100,
+    backgroundColor: "#fff"
+  },
   container_s: {
     marginTop: 25,
-    gap: 20,
-    marginBottom: 100,
+    marginBottom: 20,
     width: (screenWidth * 9) / 10,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    height: screenHeight,
-    backgroundColor: 'white',
+    alignItems: 'left',
   },
   input: {
     borderWidth: 1,
@@ -194,26 +133,29 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     borderRadius: 40,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: (screenWidth * 9) / 10,
-    alignSelf: 'center',
+    width: '100%', 
   },
   title: {
     color: 'black',
     fontSize: 18,
     fontFamily: 'OpenSans-Medium',
     fontWeight: '600',
-    // textAlign: 'left',
+    marginTop: 40,
+    marginBottom: 10,
   },
   text: {
     color: 'black',
     fontSize: 16,
     fontFamily: 'OpenSans-Regular',
     fontWeight: '400',
-    // textAlign: 'left',
+    marginBottom: 20,
+    textAlign: 'left', 
+  },
+  dayButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    width: '100%', 
   },
   dayButton: {
     borderRadius: 5,
@@ -223,23 +165,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  dText: {
+  dayButtonText: {
     fontSize: 16,
     fontFamily: 'OpenSans-Regular',
     fontWeight: '400',
     textAlign: 'center',
   },
-  startButton: {
+  buttonContainer: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    width: '100%',
+    gap: 10,
+    marginTop: 20,
+    marginBottom: 20,
+  },
+  saveButton: {
     justifyContent: 'center',
     alignItems: 'center',
     height: 57,
     borderRadius: 45,
     backgroundColor: '#F08080',
-  },
-  b3_text: {
-    color: 'white',
-    fontSize: 21,
-    fontFamily: 'OpenSans-Medium',
+    width: '100%',
   },
   cancelButton: {
     justifyContent: 'center',
@@ -249,36 +195,11 @@ const styles = StyleSheet.create({
     height: 57,
     borderRadius: 45,
     backgroundColor: 'white',
+    width: '100%',
   },
-  b2_text: {
-    color: '#F08080',
+  buttonText: {
+    color: 'white',
     fontSize: 21,
     fontFamily: 'OpenSans-Medium',
-  },
-  iconCal: {
-    justifyContent: 'center',
-    width: 18,
-    height: 20,
-    marginLeft: 2,
-  },
-  iconClock: {
-    justifyContent: 'center',
-    width: 24,
-    height: 24,
-  },
-  boxBackground: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    // justifyContent: 'space-between',
-    width: (screenWidth * 9) / 10,
-    height: 50,
-  },
-
-  underline: {
-    marginTop: 5,
-    height: 1,
-    backgroundColor: '#1E1D2033',
-    width: '92%',
-    // marginTop: 1,
   },
 });

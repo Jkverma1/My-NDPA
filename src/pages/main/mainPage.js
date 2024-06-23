@@ -232,11 +232,12 @@ const MainPage = ({route}) => {
                 borderRadius: 45,
                 backgroundColor: '#F08080',
               }}
+              onPress={handleClickSkip}
               // onPress={handleClick}
             >
               <Text style={styles.b3_text}>Let's Start</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={{
                 justifyContent: 'center',
                 alignItems: 'center',
@@ -250,7 +251,7 @@ const MainPage = ({route}) => {
               }}
               onPress={handleClickSkip}>
               <Text style={styles.b4_text}>Skip</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       </Modal>

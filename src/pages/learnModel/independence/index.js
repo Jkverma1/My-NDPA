@@ -12,7 +12,13 @@ import StartIndependenceSection from './startIndependencePart';
 import IndependenceSection from './independencePart';
 import TimerWorkSection from './timerWorkPart';
 import PercentIndependenceSection from './percentIndependencePart';
+import EnterGym from './enterGym';
+import ExitGym from './exitGym';
+import EnterTimer from './enterTimer';
+import ExitTimer from './exitTimer';
+import EnterExercise from './enterExercise';
 import {LogBox} from 'react-native';
+import Header from '../../../components/header';
 
 LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -28,13 +34,38 @@ const MainIndependenceSection = () => {
         options={{headerShown: false}}
       />
       <Stack.Screen
+        name="EnterGym"
+        component={EnterGym}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="ExitGym"
+        component={ExitGym}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="EnterTimer"
+        component={EnterTimer}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="SetTimeSection"
         component={SetTimeSection}
         options={{headerShown: false}}
       />
       <Stack.Screen
+        name="ExitTimer"
+        component={ExitTimer}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
         name="IndependenceSection"
         component={IndependenceSection}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="EnterExercise"
+        component={EnterExercise}
         options={{headerShown: false}}
       />
       <Stack.Screen
